@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE RED STILLNESS — الظل الهادئ</title>
+  <meta name="description" content="تجربة تفاعلية سردية — الهدوء القرمزي">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'red-dark': '#120505',
+            'espresso': '#1c0a0a',
+            'rust': '#8b2626',
+            'crimson': '#dc2626',
+            'cream': '#fbf7f5'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-red-dark text-cream font-sans antialiased overflow-hidden min-h-screen">
+  <!-- Dynamic Particle Canvas -->
+  <canvas id="particleCanvas" class="fixed inset-0 pointer-events-none z-0" aria-hidden="true"></canvas>
+
+  <!-- Progress Bar -->
+  <div class="fixed top-0 left-0 w-full h-1 bg-espresso z-50 overflow-hidden" role="progressbar" aria-label="تقدم التجربة" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div id="progressBar" class="h-full bg-crimson transition-all duration-500 ease-out" style="width: 0%;"></div>
+  </div>
+
+  <!-- Header Controls -->
+  <header class="relative z-10 flex justify-between items-center px-6 py-4 max-w-4xl mx-auto border-b border-rust/20">
+    <div class="flex items-center gap-3">
+      <h1 class="text-xl font-bold tracking-wider text-crimson uppercase">THE RED STILLNESS</h1>
+      <span class="text-xs px-2 py-0.5 rounded bg-rust/20 text-cream/70 border border-rust/30">v2.0</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <button id="backBtn" class="px-3 py-1.5 text-xs rounded border border-rust/40 hover:border-crimson hover:text-crimson transition-colors disabled:opacity-40 disabled:cursor-not-allowed" title="العودة للخلف (B)">
+        ← عودة
+      </button>
+      <button id="restartBtn" class="px-3 py-1.5 text-xs rounded border border-rust/40 hover:border-crimson hover:text-crimson transition-colors" title="إعادة البداية (R)">
+        إعادة البداية
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Story Content Container -->
+  <main id="mainContainer" class="relative z-10 max-w-3xl mx-auto px-6 py-12 overflow-y-auto max-h-[calc(100vh-80px)]">
+    <article class="bg-espresso/80 backdrop-blur border border-rust/30 rounded-xl p-6 sm:p-10 shadow-2xl">
+      <h2 id="chapterTitle" class="text-2xl sm:text-3xl font-bold text-crimson mb-6 border-b border-rust/30 pb-3">
+        جاري التحميل...
+      </h2>
+      <div id="storyText" class="prose prose-invert max-w-none text-base sm:text-lg leading-relaxed space-y-4 text-cream/90">
+        <!-- Story content inserted dynamically -->
+      </div>
+      <div id="choicesContainer" class="mt-8 pt-6 border-t border-rust/30 space-y-3" role="group" aria-label="خيارات المتابعة">
+        <!-- Dynamic choice buttons -->
+      </div>
+    </article>
+  </main>
+
+  <!-- Modular App Import -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

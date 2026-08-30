@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عيسى | نظام القيادة الذاتية</title>
+    <meta name="description" content="نظام عيسى - نظام القيادة الذاتية، تحويل التفكير العميق إلى أنظمة عملية">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800;900&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- 1. إعدادات المتغيرات والألوان --- */
+        :root {
+            --bg-dark: #050505;
+            --bg-panel: rgba(20, 20, 25, 0.6);
+            --primary: #00f2ff;       /* اللون الأساسي (سيان) */
+            --secondary: #ff0055;     /* اللون الثانوي (أحمر) */
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass: blur(20px);
+            --font-main: 'Cairo', sans-serif;
+            --font-code: 'Fira Code', monospace;
+            --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* --- 2. التأسيس العام (Reset & Base) --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* تأثير الضجيج للخلفية (Noise Texture) */
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* شريط التمرير */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* --- 3. الطباعة والعناوين --- */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--text-main), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .mono { font-family: var(--font-code); }
+
+        section {
+            padding: 100px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s var(--ease-out);
+        }
+        section.visible { opacity: 1; transform: translateY(0); }
+
+        .section-header {
+            margin-bottom: 60px;
+            position: relative;
+            display: inline-block;
+        }
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+        .section-line {
+            width: 60px; height: 4px;
+            background: var(--primary);
+            margin-top: 10px;
+            border-radius: 2px;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        /* --- 4. المكونات (Components) --- */
+
+        /* البطاقات الزجاجية */
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s var(--ease-out);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at top right, rgba(0, 242, 255, 0.1), transparent 40%);
+            opacity: 0;
+            transition: 0.4s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(0, 242, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .card:hover::before { opacity: 1; }
+
+        /* الأزرار */
+        .btn {
+            padding: 12px 30px;
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            font-family: var(--font-code);
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: var(--primary);
+            transition: 0.4s;
+            z-index: -1;
+        }
+        .btn:hover { color: #000; box-shadow: 0 0 20px var(--primary); }
+        .btn:hover::before { left: 0; }
+
+        /* --- 5. الهيكل (Layout) --- */
+
+        /* Nav */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+        .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: 1px; }
+        .logo span { color: var(--primary); }
+
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+            position: relative;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+        .nav-links a.active::after {
+            content: ''; position: absolute; bottom: -5px; right: 0;
+            width: 100%; height: 2px; background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Hero Section */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
+        }
+
+        .typewriter {
+            font-family: var(--font-code);
+            color: var(--primary);
+            font-size: 1.2rem;
+            background: rgba(0, 242, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            margin-bottom: 40px;
+        }
+
+        /* Stats Grid */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .stat-val { font-size: 2.5rem; font-weight: 800; color: var(--text-main); }
+        .stat-label { color: var(--text-muted); font-size: 0.9rem; }
+        .progress-bar {
+            height: 4px; background: #222; margin-top: 15px; border-radius: 2px; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; background: var(--primary); width: 0; transition: 1.5s var(--ease-out);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Terminal Style */
+        .terminal-window {
+            background: #0d0d12;
+            border-radius: 8px;
+            border: 1px solid #333;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            font-family: var(--font-code);
+            overflow: hidden;
+            direction: ltr; /* Terminal always LTR */
+            text-align: left;
+        }
+        .terminal-header {
+            background: #1a1a1f;
+            padding: 10px 15px;
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid #333;
+        }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
+
+        .terminal-body {
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+        .command-line { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+        .prompt { color: var(--primary); }
+        .cmd-input {
+            background: transparent; border: none; color: #fff;
+            font-family: inherit; font-size: inherit; outline: none; flex: 1;
+        }
+        .output-line { margin-bottom: 5px; line-height: 1.5; }
+        .highlight { color: var(--secondary); }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3rem; }
+            .nav-links { display: none; }
+            nav { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="noise-overlay"></div>
+
+    <nav>
+        <div class="logo">&lt;ISSA <span>/</span>&gt;</div>
+        <div class="nav-links">
+            <a href="#hero" class="active">الرئيسية</a>
+            <a href="#about">النظام</a>
+            <a href="#skills">القدرات</a>
+            <a href="#projects">المشاريع</a>
+            <a href="#terminal">السجل</a>
+        </div>
+    </nav>
+
+    <section id="hero" class="visible">
+        <h1 class="hero-title">نظام <span class="gradient-text">عيسى</span></h1>
+        <div class="typewriter">
+            <span id="typing-text"></span><span style="animation: blink 1s infinite">|</span>
+        </div>
+        <p style="max-width: 600px; margin-bottom: 40px; color: var(--text-muted);">
+            بناء "النسخة الحادة" القادرة على القيادة الذاتية. تحويل التفكير العميق إلى أنظمة برمجية وعقلية صارمة.
+        </p>
+        <div style="display: flex; gap: 20px;">
+            <a href="#contact" class="btn">تهيئة الاتصال</a>
+            <a href="#projects" class="btn" style="border-color: #333; color: #fff;">استعراض العمليات</a>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="section-header">
+            <h2 class="section-title">بنية النظام</h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+            <div class="card">
+                <i class="fas fa-brain" style="font-size: 2rem; color: var(--primary); margin-bottom: 20px;"></i>
+                <h3>العقلية التحليلية</h3>
+                <p style="color: var(--text-muted); margin-top: 10px;">
+                    القدرة على تفكيك المشكلات المعقدة إلى خوارزميات بسيطة. دمج الفلسفة مع المنطق البرمجي.
+                </p>
+            </div>
+            <div class="card">
+                <i class="fas fa-shield-alt" style="font-size: 2rem; color: var(--secondary); margin-bottom: 20px;"></i>
+                <h3>الانضباط الذاتي</h3>
+                <p style="color: var(--text-muted); margin-top: 10px;">
+                    العمل وفق بروتوكولات صارمة (90 يوم) لبناء العادات وكسر الحواجز النفسية.
+                </p>
+            </div>
+            <div class="card">
+                <i class="fas fa-code" style="font-size: 2rem; color: #00ff88; margin-bottom: 20px;"></i>
+                <h3>الهندسة البرمجية</h3>
+                <p style="color: var(--text-muted); margin-top: 10px;">
+                    بناء واجهات PWA حديثة، وتطبيقات تخدم التطور الشخصي (Life RPG Systems).
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills">
+        <div class="section-header">
+            <h2 class="section-title">كفاءة الأداء</h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="stats-container">
+            <div class="card" style="padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: end;">
+                    <span class="stat-label">التحليل الاستراتيجي</span>
+                    <span class="stat-val mono">95%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 95%"></div></div>
+            </div>
+
+            <div class="card" style="padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: end;">
+                    <span class="stat-label">التطوير (Full-Stack)</span>
+                    <span class="stat-val mono">88%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 88%; background: var(--secondary);"></div></div>
+            </div>
+
+            <div class="card" style="padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: end;">
+                    <span class="stat-label">الصياغة اللغوية</span>
+                    <span class="stat-val mono">92%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 92%; background: #00ff88;"></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="terminal">
+        <div class="section-header">
+            <h2 class="section-title">سجل الأوامر</h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <div class="dot red"></div>
+                <div class="dot yellow"></div>
+                <div class="dot green"></div>
+                <span style="margin-left: auto; color: #555; font-size: 0.8rem;">guest@issa-system:~</span>
+            </div>
+            <div class="terminal-body" id="terminalOutput">
+                <div class="output-line">Welcome to Issa System v2.0.4</div>
+                <div class="output-line">Type <span class="highlight">'help'</span> to see available commands.</div>
+                <br>
+            </div>
+            <div class="terminal-body" style="height: auto; padding-top: 0;">
+                <div class="command-line">
+                    <span class="prompt">➜</span>
+                    <span class="prompt" style="color: var(--secondary);">~</span>
+                    <input type="text" class="cmd-input" id="cmdInput" placeholder="Enter command..." autocomplete="off">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <div class="section-header">
+            <h2 class="section-title">المشاريع النشطة</h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <span class="mono" style="color: var(--primary);">&lt;System /&gt;</span>
+                    <span style="font-size: 0.8rem; background: rgba(0, 242, 255, 0.1); padding: 2px 8px; border-radius: 4px;">Active</span>
+                </div>
+                <h3>نظام القيادة الداخلية (RPG)</h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin: 10px 0;">
+                    تقسيم الشخصية إلى أدوار (القائد، المنفذ، المبدع) وتوزيع المهام بينهم بنظام نقاط الخبرة.
+                </p>
+                <a href="#" style="color: var(--primary); font-size: 0.9rem; text-decoration: none;">عرض التفاصيل &rarr;</a>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <span class="mono" style="color: var(--secondary);">&lt;Protocol /&gt;</span>
+                    <span style="font-size: 0.8rem; background: rgba(255, 0, 85, 0.1); padding: 2px 8px; border-radius: 4px;">Running</span>
+                </div>
+                <h3>بروتوكول الـ 90 يوم</h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin: 10px 0;">
+                    نظام إعادة ضبط الدوبامين وبناء الانضباط الحديدي من خلال جداول محاسبة يومية صارمة.
+                </p>
+                <a href="#" style="color: var(--secondary); font-size: 0.9rem; text-decoration: none;">عرض التفاصيل &rarr;</a>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <span class="mono" style="color: #00ff88;">&lt;App /&gt;</span>
+                    <span style="font-size: 0.8rem; background: rgba(0, 255, 136, 0.1); padding: 2px 8px; border-radius: 4px;">Dev</span>
+                </div>
+                <h3>متتبع التطور الذهني</h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin: 10px 0;">
+                    تطبيق ويب (PWA) لتحويل البيانات اليومية إلى مخططات بيانية لقياس النمو الشخصي.
+                </p>
+                <a href="#" style="color: #00ff88; font-size: 0.9rem; text-decoration: none;">عرض التفاصيل &rarr;</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p class="mono">SYSTEM OPERATIONAL | ISSA &copy; 2026</p>
+        <div style="margin-top: 10px; font-size: 1.2rem;">
+            <i class="fab fa-github" style="margin: 0 10px; cursor: pointer;"></i>
+            <i class="fab fa-twitter" style="margin: 0 10px; cursor: pointer;"></i>
+            <i class="fas fa-envelope" style="margin: 0 10px; cursor: pointer;"></i>
+        </div>
+    </footer>
+
+    <script>
+        // 1. Typewriter Effect
+        const textElement = document.getElementById('typing-text');
+        const phrases = ["محلل استراتيجي", "مطور أنظمة", "قائد ذاتي", "مهندس حلول"];
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function type() {
+            const currentPhrase = phrases[phraseIndex];
+
+            if (isDeleting) {
+                textElement.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                textElement.textContent = currentPhrase.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            if (!isDeleting && charIndex === currentPhrase.length) {
+                isDeleting = true;
+                setTimeout(type, 2000);
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                setTimeout(type, 500);
+            } else {
+                setTimeout(type, isDeleting ? 50 : 100);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', type);
+
+        // 2. Scroll Animation (Intersection Observer)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(sec => observer.observe(sec));
+
+        // 3. Interactive Terminal Logic
+        const cmdInput = document.getElementById('cmdInput');
+        const terminalOutput = document.getElementById('terminalOutput');
+
+        const commands = {
+            'help': 'Available commands: help, about, projects, contact, clear, date',
+            'about': 'Issa System: A self-driving philosophy turned into digital reality.',
+            'projects': 'Active: Inner Lead RPG, 90-Day Protocol, Mental Tracker App.',
+            'contact': 'Email: contact@issa-system.com | Status: Open for collaboration.',
+            'date': new Date().toString(),
+            'clear': 'CLEAR'
+        };
+
+        cmdInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const input = this.value.trim().toLowerCase();
+
+                // Add command to history
+                terminalOutput.innerHTML += `<div class="output-line"><span class="prompt">➜</span> ${input}</div>`;
+
+                // Process command
+                if (commands[input]) {
+                    if (input === 'clear') {
+                        terminalOutput.innerHTML = '';
+                    } else {
+                        terminalOutput.innerHTML += `<div class="output-line highlight">${commands[input]}</div>`;
+                    }
+                } else if (input !== '') {
+                    terminalOutput.innerHTML += `<div class="output-line" style="color: #ff5f56;">Command not found: ${input}</div>`;
+                }
+
+                // Scroll to bottom and clear input
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+                this.value = '';
+
+                // Keep layout clean
+                terminalOutput.innerHTML += '<br>';
+            }
+        });
+
+        // 4. 3D Tilt Effect for Cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = ((y - centerY) / centerY) * -5; // Max rotation deg
+                const rotateY = ((x - centerX) / centerX) * 5;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+            });
+        });
+
+    </script>
+</body>
+</html>

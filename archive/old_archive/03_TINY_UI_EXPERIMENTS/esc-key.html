@@ -1,0 +1,78 @@
+<!doctype html>
+
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Esc Key – HTML/CSS</title>
+    <style>
+      :root{
+        --blue-1:#0b56d6;   /* أعلى الخلفية */
+        --blue-2:#0a2a8c;   /* أسفل الخلفية */
+        --key:#ffd31a;      /* لون الزر */
+        --key-text:#2b2b2b; /* لون الكتابة */
+        --base:#0b0b0f;     /* قاعدة الزر (الإطار الداكن) */
+      }
+      *{box-sizing:border-box}
+      html,body{height:100%}
+      body{
+        margin:0;
+        background:linear-gradient(135deg,var(--blue-1),var(--blue-2));
+        display:grid;
+        place-items:center;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      }
+      .stage{
+        position:relative;
+        width: 150px;
+        height:150px;
+        /* ظل طويل باتجاه أعلى اليسار لمحاكاة الصورة */
+        filter: drop-shadow(-55px 55px 0 rgba(0,0,0,.28));
+      }
+      /* الإطار/القاعدة السوداء حول المفتاح */
+      .base{
+        position:absolute; inset:0;
+        background:var(--base);
+        border-radius:18px;
+      }
+      /* جسم المفتاح الأصفر */
+      .key{
+        position:absolute; inset:14px;
+        background:var(--key);
+        border:none; outline:none; cursor:default;
+        border-radius:16px;
+        font-weight:600; font-size:24px; color:var(--key-text);
+        letter-spacing:.5px;
+        /* إبرازات داخلية وخارجية لإحساس ثلاثي الأبعاد */
+        box-shadow:
+          inset 0 10px 14px rgba(255,255,255,.30),   /* إضاءة علوية */
+          inset 0 -10px 14px rgba(0,0,0,.20),        /* ظل سفلي داخلي */
+          0 6px 0 rgba(0,0,0,.35);                   /* حافة سفلية صلبة */
+      }
+      .key:active{ transform: translateY(3px); box-shadow:
+          inset 0 6px 10px rgba(255,255,255,.25),
+          inset 0 -6px 10px rgba(0,0,0,.25),
+          0 3px 0 rgba(0,0,0,.35);
+      }
+      /* نص ESC في موضع أقرب لصورة المرجع */
+      .label{
+        position:absolute; inset:14px;
+        display:flex; align-items:center; justify-content:center;
+        pointer-events:none; user-select:none;
+      }
+      .label span{ transform: translate(-6px, -6px); }/* استجابة للأحجام المختلفة */
+  @media (max-width:480px){
+    .stage{ width:120px; height:120px; filter: drop-shadow(-44px 44px 0 rgba(0,0,0,.28)); }
+    .key{ font-size:20px }
+  }
+</style>
+
+  </head>
+  <body>
+    <div class="stage" aria-label="مفتاح Esc أصفر على خلفية زرقاء">
+      <div class="base"></div>
+      <button class="key" aria-hidden="true"></button>
+      <div class="label"><span>Esc</span></div>
+    </div>
+  </body>
+</html>

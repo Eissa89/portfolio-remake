@@ -1,0 +1,47 @@
+original_name,size_bytes,sha256,decision,reason
+#U062e#U0637#U0629_#U0627#U0644#U0638#U0644_#U0627#U0644#U0647#U0627#U062f#U0626 (1).csv,8459,79a89cdc1d509f8d,ARCHIVE,Preserved as source because it was not central enough to develop.
+#U062e#U0637#U0629_#U0627#U0644#U0638#U0644_#U0627#U0644#U0647#U0627#U062f#U0626.csv,8459,79a89cdc1d509f8d,ARCHIVE,"Data/source material, not software. One duplicate exists."
+#U0633#U0643#U0631 - #U0635#U0648#U0631#U0629.csv,921,7268f86d8783bdd0,ARCHIVE,Smaller related data export; preserve as reference.
+#U0633#U0643#U0631.csv,1100,5b6449b0ac1f1b4d,ARCHIVE,Raw data; unrelated to the software-development core of this archive.
+#U0645#U0644#U0641_#U0627#U0644#U0647#U062f#U0648#U0621_#U0627#U0644#U0642#U0631#U0645#U0632#U064a_#U0627#U0644#U0645#U0639#U062f#U0644.pdf,30527,8c875894df6240e5,ARCHIVE,"Static reference document; keep as historical source, not development code."
+2-1.html,3084,13a13abd9bdd165e,DEVELOP NOW,"Actually runnable game skeleton with state, dice, events and week progression. It is small enough to rebuild instead of untangling."
+2.html,26531,1d1ac308d790e861,RESCUE,Near-duplicate older RED version; preserve only for comparing content/design decisions against 6.html.
+3.html,26559,524c317b65365ce9,RESCUE,"Near-duplicate older RED version; almost identical to 4.html, useful only as a historical checkpoint."
+4.html,26463,002d218d88e77690,RESCUE,"Latest of the near-identical 2–4 family; keep as historical fallback, not a new branch."
+5.html,13484,73fb21106842d0ea,RESCUE,"Translation/PWA experiment, but the click handler is explicitly incomplete; only salvage localization logic."
+6.html,39015,27fe7ea8d60c7ad0,DEVELOP NOW,Best RED visual/content shell in the archive; strongest final direction among RED variants. It still needs real state/data architecture.
+Eissa_RPG_App (1).zip,3081,658b54eba84ad625,DUPLICATE,Byte-for-byte duplicate of Eissa_RPG_App.zip.
+Eissa_RPG_App.zip,3081,658b54eba84ad625,ARCHIVE,Placeholder-like six-file app; no meaningful state engine. A later rebuild should supersede it.
+Eissa_RPG_Tracker.zip,2076,97d1064d74523615,DEVELOP NOW,Small but structurally useful PWA skeleton with manifest/service worker/script/css; good seed for an installable tracker.
+boot.html,12220,84396db9943f5ef9,RESCUE,Solid isolated side-nav/focus-trap microcomponent; worth extracting into a component library.
+cv ana MZG.html,25158,75a77b2daa58a5a2,RESCUE,"Good modal/project/theme shell; useful components, but superseded by dvt."
+cv ana ZG.html,14268,7fb18d6a598de365,RESCUE,Simple personal-profile baseline; keep for content lineage.
+cv ana bod.html,61915,371d8457c6b79af2,RESCUE,"Feature-rich CV variant with storage, achievements, notifications and form, but several behaviors are simulated and PWA assets are missing."
+cv ana bok.html,35466,24e14675c95d4df2,RESCUE,Feature-rich intermediate CV with localStorage; salvage selected interaction patterns.
+cv ana cga.html,3583,3989b78edeafc1a4,ARCHIVE,Minimal toggle-only concept; too shallow to justify further development.
+cv ana cgo.html,29102,319db9eafc3cdbbe,RESCUE,Clean intermediate CV/system presentation; useful for content structure.
+cv ana dvt.html,93797,9f20b335ffea3321,DEVELOP NOW,"Most complete CV/system prototype: terminal, particles, theme controls, menu, achievements, notifications, contact UI. PWA paths/assets are incomplete, and contact submit is mock."
+cv ana lon.html,25190,b30cf0bd783a4a0c,RESCUE,"Strong decision-system/identity content; useful conceptually, less useful as production code."
+cv ana mmc.html,4002,21d1e1993f783c0c,ARCHIVE,Very small static dead end with no JS behavior; no reason to iterate.
+cv ana pk.html,13656,bd53587f2bd2ea3a,RESCUE,"Step-based content/system prototype; preserve the interaction idea, not the whole page."
+cv ana ppo.html,23799,25b4e81fd9d7ec46,RESCUE,Lean terminal/RPG presentation; useful visual references.
+cv ana tt.html,16010,ede23d61bc5d494f,RESCUE,Useful command terminal/contact interaction experiment; not a complete portfolio.
+cv ana.html,40034,e8e2a5d19d3f9917,RESCUE,"Best simple CV baseline; use for content and IA, not for production code."
+eissa-card-main.zip,188,214b12b26ca69503,DUPLICATE,188-byte wrapper containing only an empty folder entry.
+eissa_card.zip,4720,d4e7c9210375199d,ARCHIVE,Standalone early card build; superseded by index (2).html and later portfolio work.
+fear.html,6536,da95223d364fd254,RESCUE,"Content prototype, not an app. Preserve content only; rebuild as data-driven module if needed."
+founder.text,64024,197a0bd365376665,DEVELOP NOW,"Contains the richest game-design concept: 12 weeks, resources, events, mental states and scoring. Preserve as source-of-truth while redesigning rules."
+full-editor.html,23695,2281e919eddfca6e,RESCUE,Useful RED visual/editor direction; better treated as a component/content source than a final application.
+h.html,2984,7d8b44f2298563fe,ARCHIVE,Tiny one-interaction experiment; extract only if the exact microinteraction is needed.
+index (1).html,39552,209edeace4ad9085,RESCUE,Older lion dashboard close to index2.html; useful as a reference but superseded by the newer version.
+index (2).html,31792,6975df82c1593714,DEVELOP NOW,Cleanest older Eissa Card foundation; coherent sections and interactions; good base for the later editorial portfolio.
+index.html,4602,35c63a62a6761cc5,ARCHIVE,"Basic static contact card, clearly superseded by the richer Eissa Card work."
+index2.html,47001,df27d7b3246160d1,RESCUE,"Conceptually rich dashboard, but currently has a real JS syntax error and five duplicate IDs; repair before any visual iteration."
+stats.html,4173,0c6f31d2753a772b,RESCUE,"Static RPG/stat planning document; keep as content source, not software."
+stats2.html,4250,31acaea5b85d8bcf,RESCUE,Near-duplicate of stats.html; only keep the newer variant for content comparison.
+test19.1.html,5414,c401906048cd7752,RESCUE,First working Three.js particle prototype; keep as historical base for the morph algorithm.
+test19.2.html,26199,e8b23198fe246fad,RESCUE,Interesting particle-morph version but heavier and less focused than v3.
+test19.3.html,26818,1802d44aeac67d3f,DEVELOP NOW,"Strongest particle experiment: starfield, glow ring, dynamic particle color, interaction and morphing. Excellent visual module candidate."
+test19.4.html,6049,100baedf5702ef14,DEVELOP NOW,"Valuable Arabic-specific 3D typography experiment using opentype.js; promising specialized module, though CDN-dependent."
+test19.html,3634,11b010d45b22f8df,RESCUE,Very early particle prototype; useful only if you need to trace the visual evolution.
+ts.html,1006,4d5ebce3d3c880f7,ARCHIVE,Tiny hover-shake experiment; not a product foundation.

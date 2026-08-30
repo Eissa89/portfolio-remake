@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عيسى | نظام القيادة والتحكم التحليلي</title>
+    <meta name="description" content="نظام عيسى - تحويل التفكير العميق إلى أنظمة عملية">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- إعدادات الخط المخصص (Mayson) --- */
+        @font-face {
+            font-family: 'Mayson Arabic';
+            src: url('mayson-arabic-light-trial.ttf') format('truetype');
+            font-weight: 300;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* --- المتغيرات الأساسية للثيم --- */
+        :root {
+            --bg-primary: #030305;
+            --bg-secondary: #0b0b10;
+            --card-bg: rgba(20, 20, 30, 0.4);
+            --text-main: #ffffff;
+            --text-muted: #a0a0b0;
+
+            --accent-color: #00f2ff;
+            --accent-glow: rgba(0, 242, 255, 0.25);
+            --secondary-accent: #ff0055;
+
+            --border-color: rgba(255, 255, 255, 0.08);
+            --glass: blur(16px);
+            --gradient-grid: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+
+            --font-heading: 'Mayson Arabic', 'Cairo', sans-serif;
+            --font-body: 'Cairo', sans-serif;
+        }
+
+        /* --- إعدادات عامة --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.8;
+            overflow-x: hidden;
+            background-image: var(--gradient-grid);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 50px; }
+        }
+
+        .mono { font-family: 'Fira Code', monospace; }
+        h1, h2, h3, .section-title { font-family: var(--font-heading); }
+
+        /* --- Preloader --- */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-primary); z-index: 9999;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .loader-terminal {
+            width: 320px; background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 8px; overflow: hidden; font-family: 'Fira Code', monospace;
+        }
+        .loader-header { background: #1a1a20; padding: 10px 15px; display: flex; align-items: center; border-bottom: 1px solid #333; }
+        .loading-text { color: var(--accent-color); margin-top: 20px; font-family: 'Fira Code', monospace; }
+
+        /* --- UI Elements --- */
+        #pageProgress {
+            position: fixed; top: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--accent-color), var(--secondary-accent));
+            width: 0%; z-index: 1001; box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 4px; }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000; padding: 1rem 2rem;
+            background: rgba(3, 3, 5, 0.85); backdrop-filter: var(--glass);
+            border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-logo { font-weight: 800; font-size: 1.6rem; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 15px var(--accent-glow); }
+        .nav-logo span { color: var(--accent-color); }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-link { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: 0.3s; }
+        .nav-link:hover, .nav-link.active { color: var(--accent-color); text-shadow: 0 0 8px var(--accent-glow); }
+
+        /* --- Hero Section --- */
+        header {
+            height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+            background: radial-gradient(circle at center, rgba(0, 242, 255, 0.05) 0%, transparent 60%); position: relative;
+        }
+        .hero-glitch {
+            font-size: 6rem; font-weight: 900; margin-bottom: 0.5rem;
+            text-shadow: 3px 3px 0px var(--secondary-accent), -3px -3px 0px var(--accent-color);
+            animation: glitch-anim 3s infinite alternate;
+        }
+        @keyframes glitch-anim {
+            0%, 90%, 100% { transform: skew(0deg); text-shadow: 3px 3px 0px var(--secondary-accent), -3px -3px 0px var(--accent-color); }
+            92% { transform: skew(10deg); text-shadow: -2px 2px 0px var(--secondary-accent), 2px -2px 0px var(--accent-color); }
+            94% { transform: skew(-10deg); }
+        }
+        .typewriter-container {
+            font-size: 1.5rem; color: var(--accent-color); background: rgba(0, 242, 255, 0.1);
+            padding: 5px 15px; border-radius: 4px; border: 1px solid var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-glow); margin-top: 20px;
+        }
+        .cursor { width: 10px; height: 3px; background: var(--text-main); display: inline-block; animation: blink 0.8s infinite; }
+
+        .system-controls {
+            position: absolute; bottom: 40px; display: flex; gap: 20px; padding: 12px 25px;
+            background: rgba(10, 10, 15, 0.8); border-radius: 50px; border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+        .color-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; transition: 0.3s; border: 2px solid rgba(255,255,255,0.1); }
+        .color-dot:hover { transform: scale(1.3); border-color: #fff; }
+
+        /* --- Sections Layout --- */
+        section { padding: 6rem 2rem; max-width: 1200px; margin: 0 auto; opacity: 0; transform: translateY(40px); transition: all 0.8s ease; }
+        section.visible { opacity: 1; transform: translateY(0); }
+        .section-title { font-size: 2.2rem; margin-bottom: 3.5rem; display: flex; align-items: center; gap: 15px; position: relative; padding-bottom: 10px; }
+        .section-title::after { content: ''; position: absolute; bottom: 0; right: 0; width: 60px; height: 4px; background: var(--accent-color); box-shadow: 0 0 10px var(--accent-color); }
+
+        /* --- Glass Cards & Grids --- */
+        .grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 2.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+
+        .glass-card {
+            background: var(--card-bg); backdrop-filter: var(--glass); border: 1px solid var(--border-color);
+            padding: 2.5rem; border-radius: 12px; position: relative; transition: 0.4s;
+        }
+        .glass-card::before { content: ''; position: absolute; top: 0; left: 0; width: 2px; height: 100%; background: linear-gradient(to bottom, var(--accent-color), transparent); }
+        .glass-card:hover { transform: translateY(-5px); border-color: var(--accent-color); box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+
+        .role-tag {
+            display: inline-flex; align-items: center; padding: 8px 16px; margin: 5px;
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 50px;
+            font-size: 0.85rem; color: var(--text-muted); transition: 0.3s;
+        }
+        .role-tag i { margin-left: 8px; color: var(--accent-color); }
+        .role-tag:hover { border-color: var(--accent-color); background: var(--accent-glow); color: #fff; }
+
+        /* --- Data Tables (From PK) --- */
+        .cyber-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .cyber-table th, .cyber-table td { border: 1px solid var(--border-color); padding: 1.2rem; text-align: right; }
+        .cyber-table th { background-color: rgba(0, 242, 255, 0.05); color: var(--accent-color); font-family: var(--font-heading); font-size: 1.1rem;}
+        .cyber-table td { color: var(--text-muted); background-color: rgba(255,255,255,0.02); transition: 0.3s;}
+        .cyber-table tr:hover td { background-color: rgba(0, 242, 255, 0.05); border-color: var(--accent-color); color: #fff;}
+
+        /* --- Interactive Decision Framework (From PK) --- */
+        .framework-container { background: var(--card-bg); border: 1px solid var(--border-color); padding: 2rem; border-radius: 12px; }
+        .step-buttons { display: flex; gap: 1rem; margin-bottom: 1.5rem; overflow-x: auto; padding-bottom: 0.5rem; }
+        .step-btn {
+            background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: var(--text-muted);
+            padding: 0.8rem 1.5rem; cursor: pointer; transition: 0.3s; font-weight: 600; white-space: nowrap; border-radius: 4px;
+        }
+        .step-btn.active, .step-btn:hover { background: var(--accent-color); color: #000; box-shadow: 0 0 15px var(--accent-glow); border-color: var(--accent-color); }
+        .step-content { display: none; background: rgba(0,0,0,0.3); padding: 2rem; border-right: 3px solid var(--accent-color); border-radius: 4px; }
+        .step-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* --- Terminal Logs --- */
+        .terminal-window {
+            background: #0d0d12; border: 1px solid var(--border-color); border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Fira Code', monospace; direction: ltr; text-align: left;
+        }
+        .terminal-header { background: #1a1a20; padding: 10px 15px; display: flex; align-items: center; border-bottom: 1px solid #333; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+        .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
+        .terminal-body { padding: 20px; color: #eee; font-size: 0.9rem; }
+        .log-entry { margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+        .cmd { color: var(--accent-color); display: block; margin-bottom: 5px; }
+        .output-text { color: #fff; border-left: 2px solid var(--secondary-accent); padding-left: 10px; margin-top: 5px; }
+
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .hero-glitch { font-size: 3.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="preloader">
+        <div class="loader-terminal">
+            <div class="loader-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                <span style="color:#888; font-size:0.8rem; margin-left:auto;">system_boot.exe</span>
+            </div>
+            <div style="padding: 20px; text-align: left; direction: ltr;">
+                <span style="color: var(--accent-color);">> </span><span style="color: #fff;">Loading Issa System...</span><br>
+                <span style="color: var(--accent-color);">> </span><span style="color: #fff;">Initializing AI Logic...</span>
+            </div>
+        </div>
+        <div class="loading-text">جاري تهيئة النظام...</div>
+    </div>
+
+    <div id="pageProgress"></div>
+
+    <nav>
+        <div class="nav-logo">&lt;ISSA <span>/</span>&gt;</div>
+        <div class="nav-links">
+            <a href="#identity" class="nav-link">الهوية والأنظمة</a>
+            <a href="#framework" class="nav-link">إطار القرار</a>
+            <a href="#audience" class="nav-link">سيكولوجية التحول</a>
+            <a href="#logs" class="nav-link">السجلات</a>
+        </div>
+    </nav>
+
+    <header>
+        <h1 class="hero-glitch">عيسى</h1>
+        <div class="typewriter-container mono">
+            <span id="typing-text"></span><span class="cursor"></span>
+        </div>
+
+        <div class="system-controls">
+            <div class="color-dot" style="background: #00f2ff; box-shadow: 0 0 10px #00f2ff;" onclick="setTheme('#00f2ff', '#ff0055')" title="Cyber Blue"></div>
+            <div class="color-dot" style="background: #bd00ff; box-shadow: 0 0 10px #bd00ff;" onclick="setTheme('#bd00ff', '#00ffea')" title="Neon Purple"></div>
+            <div class="color-dot" style="background: #00ff88; box-shadow: 0 0 10px #00ff88;" onclick="setTheme('#00ff88', '#ffcc00')" title="Matrix Green"></div>
+            <div class="color-dot" style="background: #ffcc00; box-shadow: 0 0 10px #ffcc00;" onclick="setTheme('#ffcc00', '#ff0000')" title="Golden Legend"></div>
+        </div>
+    </header>
+
+    <section id="identity">
+        <h2 class="section-title">01. الهوية والأعمدة الفكرية</h2>
+        <div class="grid-2">
+            <div class="glass-card">
+                <h3 style="color: var(--accent-color); margin-bottom: 15px; font-family: var(--font-heading); font-size: 1.5rem;">ملف التشغيل الذاتي</h3>
+                <p style="font-size: 1.1rem; color: #eee; margin-bottom: 20px;">
+                    طالب، مفكر تحليلي، ومهندس أنظمة نفسية. أعمل على بناء أنظمة داخلية للفهم والتطوير الذاتي بدلاً من استهلاك المعرفة السطحية.
+                </p>
+                <div style="border-top: 1px dashed var(--border-color); padding-top: 15px;">
+                    <h4 class="mono" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px;">> Core_Objective:</h4>
+                    <p style="color: var(--accent-color); font-weight: 600;">تطوير سيطرة معرفية ونفسية على الذات والظروف عبر أنظمة تفكير منظمة.</p>
+                </div>
+            </div>
+
+            <div class="glass-card" style="border-top: 3px solid var(--accent-color);">
+                <h3 class="mono" style="margin-bottom:20px; font-size:0.9rem; color:var(--text-muted);">
+                    <i class="fas fa-microchip"></i> Active Roles
+                </h3>
+                <div style="display: flex; flex-wrap: wrap;">
+                    <span class="role-tag"><i class="fas fa-brain"></i> التحليل النفسي الذاتي</span>
+                    <span class="role-tag"><i class="fas fa-network-wired"></i> الأنظمة العقلية</span>
+                    <span class="role-tag"><i class="fas fa-chess-king"></i> القيادة الذاتية</span>
+                    <span class="role-tag"><i class="fas fa-route"></i> التجارب التحويلية</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="framework">
+        <h2 class="section-title">02. هيكل اتخاذ القرار (System-Driven Execution)</h2>
+        <div class="framework-container">
+            <p style="color: var(--text-muted); margin-bottom: 20px;">
+                <i class="fas fa-info-circle"></i> <strong>المبدأ الأساسي:</strong> القرارات يجب أن تكون مبنية على نماذج عقلية وليس ردود فعل عاطفية.
+            </p>
+            <div class="step-buttons">
+                <button class="step-btn active" onclick="showStep(1)">1. التحليل</button>
+                <button class="step-btn" onclick="showStep(2)">2. التفكيك</button>
+                <button class="step-btn" onclick="showStep(3)">3. الأنماط</button>
+                <button class="step-btn" onclick="showStep(4)">4. التصميم</button>
+                <button class="step-btn" onclick="showStep(5)">5. الاختبار</button>
+            </div>
+
+            <div id="step1" class="step-content active">
+                <h4 style="color: var(--accent-color); font-size: 1.5rem; margin-bottom: 10px; font-family: var(--font-heading);">تحليل المشكلة</h4>
+                <p>عزل المشكلة عن العواطف وتحديد ماهيتها بدقة كبيانات خام غير معالجة.</p>
+            </div>
+            <div id="step2" class="step-content">
+                <h4 style="color: var(--accent-color); font-size: 1.5rem; margin-bottom: 10px; font-family: var(--font-heading);">تفكيك المكونات</h4>
+                <p>تقسيم المشكلة المعقدة إلى عناصرها الأولية لتسهيل التعامل مع كل جزء على حدة.</p>
+            </div>
+            <div id="step3" class="step-content">
+                <h4 style="color: var(--accent-color); font-size: 1.5rem; margin-bottom: 10px; font-family: var(--font-heading);">تحديد الأنماط</h4>
+                <p>البحث عن التكرار السلوكي أو الهيكلي في المشكلة لربطها بنماذج عقلية سابقة.</p>
+            </div>
+            <div id="step4" class="step-content">
+                <h4 style="color: var(--accent-color); font-size: 1.5rem; margin-bottom: 10px; font-family: var(--font-heading);">تصميم النظام</h4>
+                <p>بناء إطار عمل (Framework) للحل وتحويله إلى مهام يومية قابلة للقياس والتتبع في نظام RPG.</p>
+            </div>
+            <div id="step5" class="step-content">
+                <h4 style="color: var(--accent-color); font-size: 1.5rem; margin-bottom: 10px; font-family: var(--font-heading);">الاختبار العملي</h4>
+                <p>تطبيق النظام المصمم وقياس المخرجات لتعديل النظام بناءً على النتائج الفعلية.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="audience">
+        <h2 class="section-title">03. سيكولوجية التحول المستهدف</h2>
+        <div class="glass-card" style="padding: 1rem; overflow-x: auto;">
+            <table class="cyber-table">
+                <thead>
+                    <tr>
+                        <th>الحالة الحالية (Pain Points)</th>
+                        <th>المحرك النفسي (Drivers)</th>
+                        <th>التحول المستهدف (Transformation)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>فقدان الهوية والتشتت</td>
+                        <td>البحث عن معنى وفهم أعمق للذات</td>
+                        <td>بناء هوية ذاتية صلبة وواضحة المعالم</td>
+                    </tr>
+                    <tr>
+                        <td>الخوف والتردد</td>
+                        <td>الرغبة في السيطرة المعرفية على الحياة</td>
+                        <td>السيطرة التامة عبر نماذج اتخاذ قرار دقيقة</td>
+                    </tr>
+                    <tr>
+                        <td>الضعف الداخلي وعدم الانضباط</td>
+                        <td>الخروج من حالة رد الفعل العاطفي</td>
+                        <td><strong style="color: var(--accent-color);">من شخص تقوده الظروف إلى شخص يقود نفسه بوعي.</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="logs">
+        <h2 class="section-title">04. سجلات النظام (System Logs)</h2>
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                <span style="color: #888; font-size: 0.8rem; margin-left: auto;">user@issa-system:~/logs</span>
+            </div>
+            <div class="terminal-body mono">
+                <div class="log-entry">
+                    <span class="cmd">> load profile --target="Issa"</span>
+                    <p class="output-text">Loaded. Archetype: Analytical Thinker / Psychological Systems Engineer.</p>
+                </div>
+                <div class="log-entry">
+                    <span class="cmd">> check status --mental_framework</span>
+                    <p class="output-text" style="border-color: #00ff88; color: #00ff88;">[OK] Frameworks for understanding thought and decision-making are active.</p>
+                </div>
+                <div class="log-entry">
+                    <span class="cmd">> execute protocol --days=90</span>
+                    <p class="output-text">Initiating 90-day structural plan. Transitioning from reactive to proactive control.</p>
+                </div>
+                <div class="typing-line">> <span class="cursor" style="background:var(--accent-color);"></span></div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; padding: 3rem; background: #020202; border-top: 1px solid var(--border-color); margin-top: 4rem;">
+        <p class="mono" style="opacity: 0.7;">System Operational | <span style="color:var(--accent-color)">ISSA AI COLLABORATION PROFILE</span> &copy; 2026</p>
+    </footer>
+
+    <script>
+        // --- Preloader & Scroll Progress ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('preloader').style.opacity = '0';
+                document.getElementById('preloader').style.visibility = 'hidden';
+            }, 1200);
+        });
+
+        window.addEventListener('scroll', () => {
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            document.getElementById('pageProgress').style.width = (winScroll / height) * 100 + '%';
+        });
+
+        // --- Typewriter Effect ---
+        const textElement = document.getElementById('typing-text');
+        const roles = ["مفكر تحليلي", "مهندس أنظمة نفسية", "مطور أنظمة", "قائد ذاتي"];
+        let roleIndex = 0, charIndex = 0, isDeleting = false;
+
+        function type() {
+            const currentRole = roles[roleIndex];
+            if (isDeleting) {
+                textElement.textContent = currentRole.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                textElement.textContent = currentRole.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            if (!isDeleting && charIndex === currentRole.length) {
+                isDeleting = true;
+                setTimeout(type, 2000);
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                roleIndex = (roleIndex + 1) % roles.length;
+                setTimeout(type, 500);
+            } else {
+                setTimeout(type, isDeleting ? 50 : 100);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', type);
+
+        // --- Theme Switcher ---
+        function setTheme(primary, secondary) {
+            document.documentElement.style.setProperty('--accent-color', primary);
+            document.documentElement.style.setProperty('--secondary-accent', secondary);
+            document.documentElement.style.setProperty('--accent-glow', primary + '40');
+        }
+
+        // --- Decision Framework Tabs (From PK) ---
+        function showStep(stepNumber) {
+            document.querySelectorAll('.step-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.step-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`step${stepNumber}`).classList.add('active');
+            document.querySelectorAll('.step-btn')[stepNumber - 1].classList.add('active');
+        }
+
+        // --- Scroll Animations ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('section').forEach(sec => observer.observe(sec));
+    </script>
+</body>
+</html>

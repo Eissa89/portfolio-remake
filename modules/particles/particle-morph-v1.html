@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Text Particle Morphing</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; font-family: sans-serif; }
+        canvas { display: block; }
+        #ui {
+            position: absolute; top: 20px; left: 50%;
+            transform: translateX(-50%); z-index: 10;
+            display: flex; gap: 10px;
+        }
+        input {
+            padding: 10px; border-radius: 5px; border: none;
+            outline: none; font-size: 16px; width: 200px;
+        }
+        button {
+            padding: 10px 20px; border-radius: 5px; border: none;
+            background: #00ffcc; color: #000; cursor: pointer;
+            font-weight: bold; transition: 0.3s;
+        }
+        button:hover { background: #00cca3; }
+    </style>
+</head>
+<body>
+
+<div id="ui">
+    <input type="text" id="textInput" placeholder="اكتب كلمة هنا..." maxlength="10">
+    <button id="morphBtn">تحويل</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
+
+<script>
+    let scene, camera, renderer, particles, font;
+    const particleCount = 6000; // عدد الجسيمات ثابت لضمان سلاسة الحركة
+    let currentPositions;
+
+    const loader = new THREE.FontLoader();
+    // تحميل خط JSON متوافق مع Three.js
+    loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', (f) => {
+        font = f;
+        init();
+        animate();
+    });
+
+    function init() {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 10;
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // إنشاء جسيمات عشوائية في البداية
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount * 3; i++) {
+            positions[i] = (Math.random() - 0.5) * 20;
+        }
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        const material = new THREE.PointsMaterial({
+            color: 0x00ffcc,
+            size: 0.05,
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
+        });
+
+        particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        currentPositions = particles.geometry.attributes.position.array;
+
+        // حدث الضغط على الزر
+        document.getElementById('morphBtn').addEventListener('click', () => {
+            const text = document.getElementById('textInput').value || "HELLO";
+            morphToText(text);
+        });
+    }
+
+    function morphToText(text) {
+        // تحويل النص إلى نقاط (Shapes)
+        const shapes = font.generateShapes(text, 2);
+        const geometry = new THREE.ShapeGeometry(shapes);
+        geometry.computeBoundingBox();
+
+        // توسيط النص
+        const xOffset = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
+        const yOffset = -0.5 * (geometry.boundingBox.max.y - geometry.boundingBox.min.y);
+
+        // استخراج نقاط عشوائية من مساحة النص
+        const targetPositions = new Float32Array(particleCount * 3);
+        const points = geometry.getAttribute('position').array;
+
+        for (let i = 0; i < particleCount; i++) {
+            const i3 = i * 3;
+            if (i3 < points.length) {
+                // نأخذ النقاط من هندسة النص الفعلية
+                targetPositions[i3] = points[i3] + xOffset;
+                targetPositions[i3 + 1] = points[i3 + 1] + yOffset;
+                targetPositions[i3 + 2] = points[i3 + 2];
+            } else {
+                // إذا زاد عدد الجسيمات عن نقاط النص، نجعل الزائد "يختبئ" أو يتوزع عشوائياً خلف النص
+                const randomIdx = Math.floor(Math.random() * (points.length / 3)) * 3;
+                targetPositions[i3] = points[randomIdx] + xOffset;
+                targetPositions[i3 + 1] = points[randomIdx + 1] + yOffset;
+                targetPositions[i3 + 2] = points[randomIdx + 2];
+            }
+        }
+
+        // تحريك الجسيمات للمواقع الجديدة
+        gsap.to(currentPositions, {
+            endArray: targetPositions,
+            duration: 1.5,
+            ease: "expo.inOut",
+            onUpdate: () => {
+                particles.geometry.attributes.position.needsUpdate = true;
+            }
+        });
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        particles.rotation.y += 0.002;
+        renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+:root {
+  --bg-red-dark: #120505;
+  --espresso: #1c0a0a;
+  --rust: #8b2626;
+  --crimson: #dc2626;
+  --cream: #fbf7f5;
+}
+
+body {
+  background-color: var(--bg-red-dark);
+  color: var(--cream);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.choice-btn {
+  display: block;
+  width: 100%;
+  text-align: right;
+  padding: 0.875rem 1.25rem;
+  background-color: rgba(28, 10, 10, 0.6);
+  border: 1px solid rgba(139, 38, 38, 0.4);
+  border-radius: 0.5rem;
+  color: var(--cream);
+  font-size: 1rem;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.choice-btn:hover,
+.choice-btn:focus-visible {
+  background-color: rgba(139, 38, 38, 0.3);
+  border-color: var(--crimson);
+  color: #ffffff;
+  outline: 2px solid var(--crimson);
+  outline-offset: 2px;
+  transform: translateY(-1px);
+}
+
+.choice-num {
+  color: var(--crimson);
+  font-weight: 700;
+  margin-left: 0.5rem;
+}

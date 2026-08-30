@@ -1,0 +1,668 @@
+以下是经过全面改进的3D粒子文字变形页面，具有更流畅的性能、更炫酷的视觉效果和更好的移动端适配：
+
+```html
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>3D Particle Morphing | 粒子幻形 · 流体文字艺术</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: 'Segoe UI', 'Cairo', 'Poppins', system-ui, -apple-system, sans-serif;
+            background-color: #050b1a;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* UI 面板 - 玻璃质感 */
+        .ui-panel {
+            position: absolute;
+            bottom: 28px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            z-index: 100;
+            padding: 12px 24px;
+            background: rgba(8, 12, 25, 0.65);
+            backdrop-filter: blur(16px);
+            border-radius: 80px;
+            width: fit-content;
+            margin: 0 auto;
+            border: 1px solid rgba(0, 255, 210, 0.4);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 255, 200, 0.1) inset;
+            transition: all 0.3s ease;
+        }
+
+        .ui-panel:hover {
+            border-color: rgba(0, 255, 210, 0.7);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        input {
+            padding: 12px 24px;
+            border-radius: 60px;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            width: 260px;
+            background: rgba(10, 15, 30, 0.9);
+            color: #0ff;
+            font-weight: 500;
+            text-align: center;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            border: 1px solid rgba(0, 255, 210, 0.5);
+            font-family: 'Courier New', monospace;
+            backdrop-filter: blur(4px);
+        }
+
+        input:focus {
+            border-color: #0ff;
+            box-shadow: 0 0 18px rgba(0, 255, 200, 0.5);
+            background: rgba(0, 0, 0, 0.85);
+            transform: scale(1.02);
+        }
+
+        input::placeholder {
+            color: rgba(0, 255, 210, 0.5);
+            font-size: 0.9rem;
+        }
+
+        button {
+            padding: 12px 32px;
+            border-radius: 60px;
+            border: none;
+            background: linear-gradient(125deg, #00ffcc, #0088aa);
+            color: #000;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: 0.25s;
+            box-shadow: 0 0 14px rgba(0, 255, 200, 0.6);
+            letter-spacing: 0.8px;
+            font-family: inherit;
+            backdrop-filter: blur(2px);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(125deg, #2effdd, #00aacc);
+            box-shadow: 0 0 28px rgba(0, 255, 210, 0.9);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        /* 信息浮层 */
+        .info-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: rgba(210, 240, 255, 0.8);
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(8px);
+            padding: 6px 14px;
+            border-radius: 32px;
+            font-size: 12px;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+            pointer-events: none;
+            z-index: 100;
+            font-family: monospace;
+            border-left: 3px solid #0ff;
+        }
+
+        /* 加载指示器 */
+        .loader {
+            position: absolute;
+            bottom: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #0ff;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-family: monospace;
+            backdrop-filter: blur(8px);
+            z-index: 200;
+            pointer-events: none;
+            transition: opacity 0.8s;
+            white-space: nowrap;
+            border: 1px solid rgba(0,255,200,0.4);
+        }
+
+        @media (max-width: 650px) {
+            input { width: 170px; padding: 10px 16px; font-size: 0.85rem; }
+            button { padding: 10px 24px; font-size: 0.85rem; }
+            .ui-panel { gap: 10px; padding: 10px 18px; bottom: 20px; }
+            .info-badge { font-size: 9px; top: 12px; left: 12px; }
+        }
+
+        @keyframes subtleGlow {
+            0% { text-shadow: 0 0 2px #0ff; }
+            100% { text-shadow: 0 0 8px #0ff; }
+        }
+    </style>
+</head>
+<body>
+    <div class="info-badge">
+        ✦ 3D PARTICLE MORPHING ✦  حركة الجسيمات السحرية
+    </div>
+    <div class="ui-panel">
+        <input type="text" id="textInput" placeholder="اكتب كلمة... | TYPE WORD" value="CREATIVE" maxlength="14">
+        <button id="morphBtn">🌀  MORPH  🌀</button>
+    </div>
+    <div id="loaderMsg" class="loader" style="opacity:0;">تحميل الخطوط...</div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "gsap": "https://unpkg.com/gsap@3.12.5/index.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import gsap from 'gsap';
+
+        // ========== 配置参数 ==========
+        const CONFIG = {
+            PARTICLE_COUNT: 9800,        // 粒子数量 (丰富细节)
+            FONT_SIZE: 1.75,              // 文字大小
+            CAM_DIST: 13.5,
+            MORPH_DURATION: 1.55,
+            ROTATION_SENSITIVITY: 0.22,
+            COLOR_CYCLE_SPEED: 0.002,
+            PARTICLE_SIZE: 0.072,
+            FALLBACK_TEXT: "3D ART"
+        };
+
+        // 全局变量
+        let scene, camera, renderer, particleSystem;
+        let loadedFont = null;
+        let morphAnimation = null;
+        let starField, nebulaRing;
+        let ambientLight, mainLight, colorLight;
+
+        // 交互
+        let mouseX = 0, mouseY = 0;
+        let targetRotationX = 0, targetRotationY = 0;
+        let timeAcc = 0;
+
+        // 缓存几何体 (提高重复文字性能)
+        const textGeometryCache = new Map();
+
+        // UI 元素
+        const textInput = document.getElementById('textInput');
+        const morphBtn = document.getElementById('morphBtn');
+        const loaderDiv = document.getElementById('loaderMsg');
+
+        // ========== 辅助函数 ==========
+        function showLoader(show, message = "جاري التحميل...") {
+            if (show) {
+                loaderDiv.style.opacity = '1';
+                loaderDiv.innerText = message;
+            } else {
+                loaderDiv.style.opacity = '0';
+                setTimeout(() => { if(loaderDiv) loaderDiv.innerText = ""; }, 500);
+            }
+        }
+
+        // 动态生成星云背景 (更华丽)
+        function createEnhancedStarfield() {
+            const starGeometry = new THREE.BufferGeometry();
+            const starCount = 2200;
+            const positions = new Float32Array(starCount * 3);
+            const starColors = new Float32Array(starCount * 3);
+            for (let i = 0; i < starCount; i++) {
+                // 分布在更大的球形区域
+                const radius = 45 + Math.random() * 45;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                positions[i*3] = radius * Math.sin(phi) * Math.cos(theta);
+                positions[i*3+1] = radius * Math.sin(phi) * Math.sin(theta) * 0.6;
+                positions[i*3+2] = radius * Math.cos(phi) - 20;
+                // 随机颜色 (冷色调)
+                starColors[i*3] = 0.3 + Math.random() * 0.5;   // R
+                starColors[i*3+1] = 0.5 + Math.random() * 0.5; // G
+                starColors[i*3+2] = 0.7 + Math.random() * 0.3; // B
+            }
+            starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            starGeometry.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+            const starMaterial = new THREE.PointsMaterial({ size: 0.12, vertexColors: true, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending });
+            const stars = new THREE.Points(starGeometry, starMaterial);
+            scene.add(stars);
+            return stars;
+        }
+
+        // 动态粒子光环
+        function createGlowRing() {
+            const geom = new THREE.BufferGeometry();
+            const count = 1400;
+            const pos = [];
+            for (let i = 0; i < count; i++) {
+                const angle = (i / count) * Math.PI * 2;
+                const radius = 3.2 + Math.sin(angle * 5) * 0.5;
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius * 0.7;
+                const z = Math.sin(angle * 2) * 0.6;
+                pos.push(x, y, z);
+            }
+            geom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pos), 3));
+            const mat = new THREE.PointsMaterial({ color: 0x44ccff, size: 0.045, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending });
+            const ring = new THREE.Points(geom, mat);
+            scene.add(ring);
+            return ring;
+        }
+
+        // 初始化场景 (高级光照 + 雾效)
+        function initScene() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x030318);
+            scene.fog = new THREE.FogExp2(0x030318, 0.0025);
+
+            camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0.5, CONFIG.CAM_DIST);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            document.body.appendChild(renderer.domElement);
+
+            // 动态光源
+            ambientLight = new THREE.AmbientLight(0x111122);
+            scene.add(ambientLight);
+            mainLight = new THREE.DirectionalLight(0x88aaff, 0.8);
+            mainLight.position.set(2, 3, 4);
+            scene.add(mainLight);
+            colorLight = new THREE.PointLight(0xff44aa, 0.6);
+            colorLight.position.set(-1.5, 1, 2.5);
+            scene.add(colorLight);
+
+            const backFill = new THREE.PointLight(0x2266ff, 0.45);
+            backFill.position.set(0, 1, -5);
+            scene.add(backFill);
+
+            // 装饰元素
+            starField = createEnhancedStarfield();
+            nebulaRing = createGlowRing();
+        }
+
+        // 创建初始粒子系统 (随机星云状)
+        function createInitialParticleSystem() {
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(CONFIG.PARTICLE_COUNT * 3);
+            const colors = new Float32Array(CONFIG.PARTICLE_COUNT * 3);
+
+            for (let i = 0; i < CONFIG.PARTICLE_COUNT; i++) {
+                // 螺旋云团状分布
+                const t = Math.random();
+                const radius = 5.2 * Math.pow(t, 0.7);
+                const angle = Math.random() * Math.PI * 2;
+                const height = (Math.random() - 0.5) * 4.5;
+                const x = Math.cos(angle) * radius * (0.8 + Math.sin(angle * 3) * 0.2);
+                const y = Math.sin(angle) * radius * 0.6 + height * 0.5;
+                const z = Math.sin(angle * 1.7) * 1.2 + (Math.random() - 0.5) * 1.8;
+                positions[i*3] = x;
+                positions[i*3+1] = y;
+                positions[i*3+2] = z;
+
+                // 鲜艳的初始颜色
+                const hue = (angle + Math.random() * 0.5) % (Math.PI * 2);
+                colors[i*3] = 0.2 + Math.sin(hue) * 0.6;
+                colors[i*3+1] = 0.4 + Math.cos(hue * 1.3) * 0.5;
+                colors[i*3+2] = 0.7 + Math.sin(hue * 2) * 0.3;
+            }
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: CONFIG.PARTICLE_SIZE,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.92,
+                blending: THREE.AdditiveBlending
+            });
+
+            const points = new THREE.Points(geometry, material);
+            scene.add(points);
+            return points;
+        }
+
+        // 从文本提取高质量粒子目标位置 (增强: 均匀采样 + 边缘增强)
+        function getTargetPositionsFromText(text) {
+            if (!loadedFont) return null;
+
+            let displayText = text.trim().slice(0, 14);
+            if (displayText === "") displayText = CONFIG.FALLBACK_TEXT;
+            // 大写处理 (英文字母美观)
+            const upperText = displayText.toUpperCase();
+
+            // 缓存检查
+            if (textGeometryCache.has(upperText)) {
+                return textGeometryCache.get(upperText);
+            }
+
+            try {
+                const shapes = loadedFont.generateShapes(upperText, CONFIG.FONT_SIZE, {
+                    curveSegments: 48,
+                    bevelEnabled: false
+                });
+                const textGeometry = new THREE.ShapeGeometry(shapes);
+                textGeometry.computeBoundingBox();
+                const bbox = textGeometry.boundingBox;
+                if (!bbox) return null;
+
+                const centerX = (bbox.min.x + bbox.max.x) / 2;
+                const centerY = (bbox.min.y + bbox.max.y) / 2;
+                const positionAttr = textGeometry.attributes.position;
+                if (!positionAttr) return null;
+
+                const rawPoints = positionAttr.array;
+                const totalVerts = rawPoints.length / 3;
+                if (totalVerts === 0) return null;
+
+                // 目标位置数组
+                const targetPos = new Float32Array(CONFIG.PARTICLE_COUNT * 3);
+
+                // 高级采样： 使用多轮分配 + 边缘抖动让文字饱满
+                for (let i = 0; i < CONFIG.PARTICLE_COUNT; i++) {
+                    // 周期性索引 + 微小偏移保证覆盖所有笔画
+                    const srcIdx = (i % totalVerts) * 3;
+                    let x = rawPoints[srcIdx];
+                    let y = rawPoints[srcIdx + 1];
+                    let z = (rawPoints[srcIdx + 2] || 0) * 0.6;
+
+                    // 居中
+                    x -= centerX;
+                    y -= centerY;
+
+                    // 增加有机噪点，避免死板网格感
+                    if (Math.random() < 0.4) {
+                        x += (Math.random() - 0.5) * 0.058;
+                        y += (Math.random() - 0.5) * 0.058;
+                        z += (Math.random() - 0.5) * 0.045;
+                    }
+
+                    targetPos[i*3] = x;
+                    targetPos[i*3+1] = y;
+                    targetPos[i*3+2] = z * 0.9;
+                }
+
+                // 二次增强：随机选取额外顶点使边缘更锐利
+                const extraCount = Math.min(Math.floor(CONFIG.PARTICLE_COUNT * 0.18), 1800);
+                for (let i = 0; i < extraCount; i++) {
+                    const randIdx = Math.floor(Math.random() * CONFIG.PARTICLE_COUNT);
+                    const randVert = Math.floor(Math.random() * totalVerts) * 3;
+                    let x = rawPoints[randVert] - centerX + (Math.random() - 0.5) * 0.09;
+                    let y = rawPoints[randVert + 1] - centerY + (Math.random() - 0.5) * 0.09;
+                    let z = (rawPoints[randVert + 2] || 0) * 0.7 + (Math.random() - 0.5) * 0.1;
+                    targetPos[randIdx*3] = x;
+                    targetPos[randIdx*3+1] = y;
+                    targetPos[randIdx*3+2] = z;
+                }
+
+                // 存入缓存
+                textGeometryCache.set(upperText, targetPos);
+                return targetPos;
+            } catch (err) {
+                console.warn("Text geometry error:", err);
+                return null;
+            }
+        }
+
+        // 动态改变粒子颜色 (流动色系)
+        function updateParticleColorsDynamic() {
+            if (!particleSystem) return;
+            const colorAttr = particleSystem.geometry.attributes.color;
+            if (!colorAttr) return;
+            const colorsArray = colorAttr.array;
+            const now = Date.now() * 0.002;
+            for (let i = 0; i < CONFIG.PARTICLE_COUNT; i++) {
+                const phase = (i * 0.0009 + now) % (Math.PI * 2);
+                // 梦幻彩虹渐变
+                const r = 0.5 + Math.sin(phase) * 0.5;
+                const g = 0.4 + Math.cos(phase * 1.2) * 0.5;
+                const b = 0.8 + Math.sin(phase * 1.8) * 0.2;
+                colorsArray[i*3] = r;
+                colorsArray[i*3+1] = g;
+                colorsArray[i*3+2] = b;
+            }
+            colorAttr.needsUpdate = true;
+        }
+
+        // 核心变形动画
+        function morphToText(text) {
+            if (!loadedFont || !particleSystem) {
+                showLoader(true, "⏳ انتظر تحميل المؤثرات...");
+                return;
+            }
+
+            const targetPositions = getTargetPositionsFromText(text);
+            if (!targetPositions) {
+                console.warn("فشل إنشاء النص المستهدف");
+                return;
+            }
+
+            const currentAttr = particleSystem.geometry.attributes.position;
+            const currentPos = currentAttr.array;
+            const tempArray = new Float32Array(currentPos.length);
+            tempArray.set(currentPos);
+
+            if (morphAnimation) morphAnimation.kill();
+
+            // 同时动态变换粒子颜色 (产生渐变火花感)
+            const colorAttr = particleSystem.geometry.attributes.color;
+            let originalColors = null;
+            if (colorAttr) {
+                originalColors = new Float32Array(colorAttr.array.length);
+                originalColors.set(colorAttr.array);
+                const newColors = new Float32Array(colorAttr.array.length);
+                for (let i = 0; i < CONFIG.PARTICLE_COUNT; i++) {
+                    const randHue = Math.random();
+                    newColors[i*3] = 0.2 + Math.random() * 0.9;
+                    newColors[i*3+1] = 0.3 + Math.random() * 0.7;
+                    newColors[i*3+2] = 0.6 + Math.random() * 0.4;
+                }
+                gsap.to(colorAttr.array, {
+                    endArray: newColors,
+                    duration: 1.3,
+                    ease: "power2.out",
+                    onUpdate: () => colorAttr.needsUpdate = true
+                });
+            }
+
+            // 摄像机脉冲反馈
+            gsap.killTweensOf(camera.position);
+            gsap.to(camera.position, {
+                z: CONFIG.CAM_DIST - 1.2,
+                duration: 0.2,
+                yoyo: true,
+                repeat: 1,
+                ease: "power2",
+                onComplete: () => { camera.position.z = CONFIG.CAM_DIST; }
+            });
+
+            // 粒子位置动画
+            morphAnimation = gsap.to(tempArray, {
+                endArray: targetPositions,
+                duration: CONFIG.MORPH_DURATION,
+                ease: "elastic.out(0.9, 0.5)",
+                onUpdate: () => {
+                    for (let i = 0; i < currentPos.length; i++) {
+                        currentPos[i] = tempArray[i];
+                    }
+                    currentAttr.needsUpdate = true;
+                },
+                onComplete: () => {
+                    for (let i = 0; i < currentPos.length; i++) {
+                        currentPos[i] = targetPositions[i];
+                    }
+                    currentAttr.needsUpdate = true;
+                }
+            });
+        }
+
+        // 鼠标/触摸交互
+        function initInteractivity() {
+            const handleMove = (clientX, clientY) => {
+                const w = window.innerWidth, h = window.innerHeight;
+                const nx = (clientX / w) * 2 - 1;
+                const ny = (clientY / h) * 2 - 1;
+                targetRotationY = nx * CONFIG.ROTATION_SENSITIVITY;
+                targetRotationX = ny * 0.15;
+            };
+
+            window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+            window.addEventListener('touchmove', (e) => {
+                if (e.touches.length) handleMove(e.touches[0].clientX, e.touches[0].clientY);
+            });
+        }
+
+        // 动画循环 (旋转、颜色动态、星空旋转)
+        function animate() {
+            requestAnimationFrame(animate);
+            timeAcc += 0.008;
+
+            if (particleSystem) {
+                // 平滑跟随鼠标旋转
+                particleSystem.rotation.y += (targetRotationY - particleSystem.rotation.y) * 0.06;
+                particleSystem.rotation.x += (targetRotationX * 0.6 - particleSystem.rotation.x) * 0.06;
+                // 微自转
+                particleSystem.rotation.z += 0.0008;
+            }
+
+            // 动态改变粒子颜色 (持续流光)
+            if (particleSystem && particleSystem.geometry.attributes.color) {
+                const colors = particleSystem.geometry.attributes.color.array;
+                for (let i = 0; i < CONFIG.PARTICLE_COUNT; i++) {
+                    const id = i * 3;
+                    const shift = timeAcc + i * 0.0006;
+                    colors[id] = 0.4 + Math.sin(shift) * 0.5;
+                    colors[id+1] = 0.3 + Math.cos(shift * 1.3) * 0.6;
+                    colors[id+2] = 0.7 + Math.sin(shift * 2.1) * 0.3;
+                }
+                particleSystem.geometry.attributes.color.needsUpdate = true;
+            }
+
+            // 星空缓缓旋转
+            if (starField) {
+                starField.rotation.y += 0.0003;
+                starField.rotation.x += 0.00015;
+            }
+            if (nebulaRing) {
+                nebulaRing.rotation.z += 0.002;
+                nebulaRing.rotation.y += 0.001;
+            }
+
+            // 动态光源色温
+            const hue = timeAcc * 0.8;
+            if (colorLight) {
+                colorLight.intensity = 0.55 + Math.sin(timeAcc) * 0.2;
+            }
+
+            // 相机微小位移 (呼吸感)
+            camera.position.x += (targetRotationY * 0.18 - camera.position.x) * 0.04;
+            camera.position.y += (-targetRotationX * 0.12 - camera.position.y) * 0.04;
+            camera.lookAt(0, 0, 0);
+
+            renderer.render(scene, camera);
+        }
+
+        // 字体加载 + 启动
+        const fontLoader = new THREE.FontLoader();
+        // 使用稳定可靠的 Three.js 示例字体 (helvetiker 风格)
+        const fontUrl = 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json';
+
+        showLoader(true, "✨ جاري تحميل المحرك البصري ✨");
+
+        fontLoader.load(fontUrl, (fontData) => {
+            loadedFont = fontData;
+            console.log("✓ Font loaded successfully");
+            showLoader(false);
+
+            // 构建完整世界
+            initScene();
+            particleSystem = createInitialParticleSystem();
+
+            // 默认变形为输入框文字
+            setTimeout(() => {
+                let initText = textInput.value.trim();
+                if (!initText) initText = "CREATIVE";
+                morphToText(initText);
+            }, 180);
+
+            initInteractivity();
+            animate();
+
+            // 绑定按钮事件
+            morphBtn.addEventListener('click', () => {
+                let newText = textInput.value.trim();
+                if (newText === "") newText = "VOID";
+                morphToText(newText);
+                // 触觉反馈 (光效脉冲)
+                gsap.to(morphBtn, { scale: 0.96, duration: 0.1, yoyo: true, repeat: 1 });
+            });
+
+            // 支持回车触发
+            textInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    let val = textInput.value.trim();
+                    if (val === "") val = "ART";
+                    morphToText(val);
+                }
+            });
+
+        }, undefined, (err) => {
+            console.error("Font load error:", err);
+            showLoader(true, "⚠️ جاري استخدام الوضع البديل...");
+            // 后备方案：仍启动场景，但不依赖字体，使用默认简单形态
+            initScene();
+            particleSystem = createInitialParticleSystem();
+            animate();
+            // 修改按钮行为：提示无法变形但保留视觉效果
+            morphBtn.addEventListener('click', () => {
+                showLoader(true, "⚠️ أعد تحميل الصفحة لتجربة سلسة");
+                setTimeout(() => showLoader(false), 1200);
+            });
+            showLoader(false);
+        });
+
+        // 窗口自适应
+        window.addEventListener('resize', onWindowResize, false);
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // 优雅清理 (防止内存)
+        window.addEventListener('beforeunload', () => {
+            if (morphAnimation) morphAnimation.kill();
+            if (renderer) renderer.dispose();
+        });
+    </script>
+</body>
+</html>
+```

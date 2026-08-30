@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>عيسى | نظام القيادة الذاتية</title>
+    <meta name="description" content="نظام عيسى - نظام القيادة الذاتية، تحويل التفكير العميق إلى أنظمة عملية">
+    <meta name="keywords" content="قيادة ذاتية, تطوير شخصي, أنظمة, برمجة, فلسفة">
+    <meta name="theme-color" content="#00f2ff">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-primary: #030305;
+            --bg-secondary: #0b0b10;
+            --card-bg: rgba(20, 20, 30, 0.6);
+            --text-main: #ffffff;
+            --text-muted: #a0a0b0;
+            --accent-primary: #00f2ff;
+            --accent-secondary: #ff0055;
+            --accent-glow: rgba(0, 242, 255, 0.3);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            --font-primary: 'Cairo', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+        }
+
+        /* Base Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* Typography */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Preloader */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-primary); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        .loader-ring {
+            width: 80px; height: 80px; border: 4px solid transparent;
+            border-top-color: var(--accent-primary); border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Navigation */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            padding: 1rem 5%; background: rgba(3, 3, 5, 0.8);
+            backdrop-filter: blur(10px); display: flex;
+            justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-link {
+            color: var(--text-muted); text-decoration: none;
+            font-weight: 600; transition: var(--transition-base);
+        }
+        .nav-link:hover, .nav-link.active { color: var(--accent-primary); }
+
+        /* Header */
+        header {
+            min-height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            padding: 0 5%;
+        }
+
+        .hero-title { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900; }
+
+        /* Terminal */
+        .terminal {
+            background: #0a0a0f; border-radius: 12px;
+            border: 1px solid var(--border-color); width: 100%;
+            max-width: 800px; margin: 2rem auto; overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .terminal-header {
+            background: #1a1a20; padding: 0.8rem 1.2rem;
+            display: flex; gap: 8px; align-items: center;
+        }
+
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+
+        .terminal-body {
+            padding: 1.5rem; font-family: var(--font-mono);
+            height: 300px; overflow-y: auto; text-align: right;
+        }
+
+        .terminal-input-wrapper {
+            display: flex; align-items: center; gap: 10px;
+            border-top: 1px solid var(--border-color); padding: 1rem;
+        }
+
+        .terminal-input {
+            background: transparent; border: none; color: var(--accent-primary);
+            font-family: var(--font-mono); font-size: 1rem; width: 100%; outline: none;
+        }
+
+        /* Sections & Observer Logic */
+        section {
+            padding: 100px 5%; max-width: 1200px; margin: 0 auto;
+            opacity: 0; transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        section.visible { opacity: 1; transform: translateY(0); }
+
+        .card {
+            background: var(--card-bg); padding: 2rem;
+            border-radius: 15px; border: 1px solid var(--border-color);
+            transition: var(--transition-base); height: 100%;
+        }
+
+        .card:hover { border-color: var(--accent-primary); transform: translateY(-5px); }
+
+        /* Stats & Progress */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .progress-bar {
+            height: 8px; background: rgba(255,255,255,0.1);
+            border-radius: 4px; overflow: hidden; margin-top: 10px;
+        }
+        .progress-fill {
+            height: 100%; background: var(--accent-primary);
+            width: 0%; transition: width 1.5s ease-in-out;
+        }
+
+        /* Toast & Achievements */
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; }
+        .toast {
+            background: var(--bg-secondary); border: 1px solid var(--accent-primary);
+            padding: 1rem; border-radius: 8px; margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero-title { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="preloader" aria-hidden="true">
+        <div class="loader-ring"></div>
+        <p style="margin-top: 1rem; color: var(--accent-primary);">جاري تحميل النظام...</p>
+    </div>
+
+    <nav>
+        <div class="nav-logo" style="font-weight: 900; font-size: 1.5rem;">
+            <i class="fas fa-brain"></i> عيسى<span>.sys</span>
+        </div>
+        <div class="nav-links">
+            <a href="#about" class="nav-link">الملف</a>
+            <a href="#stats" class="nav-link">الإحصائيات</a>
+            <a href="#projects" class="nav-link">المشاريع</a>
+            <a href="#contact" class="nav-link">الاتصال</a>
+        </div>
+        <button class="theme-toggle" id="themeBtn" aria-label="تغيير الألوان" style="background:none; border:none; color:white; cursor:pointer;">
+            <i class="fas fa-palette"></i>
+        </button>
+    </nav>
+
+    <header id="about">
+        <h1 class="hero-title">نظام <span class="gradient-text">عيسى</span> للقيادة الذاتية</h1>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 1rem auto;">
+            تحويل الأفكار المعقدة إلى أنظمة رقمية بسيطة وقوية.
+        </p>
+
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+                <span style="font-family: var(--font-mono); font-size: 0.8rem; margin-right: 10px; opacity: 0.5;">root@issa-system:~</span>
+            </div>
+            <div class="terminal-body" id="terminalOutput">
+                <div>> النظام جاهز. اكتب 'help' لرؤية الأوامر.</div>
+            </div>
+            <div class="terminal-input-wrapper">
+                <span style="color: var(--accent-primary); font-family: var(--font-mono);">$</span>
+                <input type="text" id="terminalInput" class="terminal-input" placeholder="اكتب أمراً..." autofocus>
+            </div>
+        </div>
+    </header>
+
+    <section id="stats">
+        <h2 style="text-align: center; margin-bottom: 3rem;" class="gradient-text">القدرات الجوهرية</h2>
+        <div class="stats-grid">
+            <div class="card" data-stat="95">
+                <h3>تطوير الـ Frontend</h3>
+                <div class="progress-bar"><div class="progress-fill" style="background: #00f2ff;"></div></div>
+                <p style="margin-top: 10px;">95%</p>
+            </div>
+            <div class="card" data-stat="90">
+                <h3>هندسة الأنظمة</h3>
+                <div class="progress-bar"><div class="progress-fill" style="background: #ff0055;"></div></div>
+                <p style="margin-top: 10px;">90%</p>
+            </div>
+            <div class="card" data-stat="85">
+                <h3>الذكاء الاصطناعي</h3>
+                <div class="progress-bar"><div class="progress-fill" style="background: #00ff88;"></div></div>
+                <p style="margin-top: 10px;">85%</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <h2 class="gradient-text" style="margin-bottom: 1.5rem;">تواصل مع النظام</h2>
+            <form id="contactForm">
+                <div style="margin-bottom: 1rem;">
+                    <input type="text" placeholder="الاسم" class="terminal-input" style="border: 1px solid var(--border-color); padding: 0.8rem; border-radius: 8px;" required>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <input type="email" placeholder="البريد" class="terminal-input" style="border: 1px solid var(--border-color); padding: 0.8rem; border-radius: 8px;" required>
+                </div>
+                <button type="submit" id="submitBtn" style="background: var(--accent-primary); color: black; border: none; padding: 1rem 2rem; border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%;">
+                    إرسال البيانات
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <div class="toast-container" id="toastBox"></div>
+
+    <script>
+        // 1. Preloader
+        window.addEventListener('load', () => {
+            document.getElementById('preloader').style.display = 'none';
+        });
+
+        // 2. Intersection Observer لإظهار الأقسام والـ Progress Bars
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // إذا كان القسم يحتوي على شريط تقدم
+                    const fills = entry.target.querySelectorAll('.progress-fill');
+                    fills.forEach(fill => {
+                        const targetValue = fill.closest('.card').dataset.stat;
+                        fill.style.width = targetValue + '%';
+                    });
+                }
+            });
+        }, { threshold: 0.2 });
+
+        document.querySelectorAll('section').forEach(section => observer.observe(section));
+
+        // 3. Terminal Logic with History
+        const terminalInput = document.getElementById('terminalInput');
+        const terminalOutput = document.getElementById('terminalOutput');
+        let commandHistory = [];
+        let historyIndex = -1;
+
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const cmd = terminalInput.value.trim().toLowerCase();
+                if (cmd) {
+                    handleCommand(cmd);
+                    commandHistory.push(cmd);
+                    historyIndex = commandHistory.length;
+                    terminalInput.value = '';
+                }
+            } else if (e.key === 'ArrowUp') {
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    terminalInput.value = commandHistory[historyIndex];
+                }
+            }
+        });
+
+        function handleCommand(cmd) {
+            let response = '';
+            switch(cmd) {
+                case 'help': response = 'الأوامر المتاحة: about, clear, status, contact'; break;
+                case 'about': response = 'نظام عيسى: نسخة رقمية متطورة تهدف لتحقيق الكفاءة القصوى.'; break;
+                case 'status': response = 'النظام يعمل بكفاءة 100% | الذاكرة مستقرة.'; break;
+                case 'clear': terminalOutput.innerHTML = ''; return;
+                default: response = `الأمر "${cmd}" غير معروف.`;
+            }
+            const line = document.createElement('div');
+            line.innerHTML = `<span style="color: #ff0055;">$</span> ${cmd}<br><span style="color: var(--text-muted);">${response}</span>`;
+            terminalOutput.appendChild(line);
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
+
+        // 4. Contact Form Logic (Mock API)
+        const contactForm = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري المزامنة...';
+            submitBtn.disabled = true;
+
+            // محاكاة طلب API
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            showToast('تم استقبال بياناتك في قاعدة النظام بنجاح!', 'success');
+            submitBtn.innerHTML = 'إرسال البيانات';
+            submitBtn.disabled = false;
+            contactForm.reset();
+        });
+
+        function showToast(msg, type) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas fa-check-circle" style="color: var(--accent-primary);"></i> ${msg}`;
+            document.getElementById('toastBox').appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        // 5. Dynamic Theme Toggle
+        const themeBtn = document.getElementById('themeBtn');
+        let currentTheme = 0;
+        const themes = [
+            { primary: '#00f2ff', secondary: '#ff0055' },
+            { primary: '#00ff88', secondary: '#00ccff' },
+            { primary: '#bd00ff', secondary: '#ffcc00' }
+        ];
+
+        themeBtn.addEventListener('click', () => {
+            currentTheme = (currentTheme + 1) % themes.length;
+            document.documentElement.style.setProperty('--accent-primary', themes[currentTheme].primary);
+            document.documentElement.style.setProperty('--accent-secondary', themes[currentTheme].secondary);
+            showToast('تم تحديث بروتوكول الألوان', 'info');
+        });
+    </script>
+</body>
+</html>

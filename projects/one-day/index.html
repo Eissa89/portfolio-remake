@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>12 أسبوع - تحدي المؤسس</title>
+<style>
+body {
+    font-family: Arial;
+    background: #111;
+    color: #eee;
+    text-align: center;
+}
+.container {
+    max-width: 600px;
+    margin: auto;
+}
+.card {
+    background: #222;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 10px;
+}
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    background: #444;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+button:hover {
+    background: #666;
+}
+.stat {
+    display: flex;
+    justify-content: space-between;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🎲 تحدي المؤسس - 12 أسبوع</h2>
+
+<div class="card">
+    <div class="stat">💰 النقد: <span id="money">1000</span></div>
+    <div class="stat">⭐ السمعة: <span id="rep">10</span></div>
+    <div class="stat">👥 العملاء: <span id="clients">0</span></div>
+    <div class="stat">📅 الأسبوع: <span id="week">1</span></div>
+</div>
+
+<div class="card">
+    <h3>🎲 النرد</h3>
+    <p id="diceResult">-</p>
+    <button onclick="rollDice()">ارمِ النرد</button>
+</div>
+
+<div class="card">
+    <h3>🃏 الحدث</h3>
+    <p id="eventText">-</p>
+    <button onclick="drawEvent()">سحب بطاقة</button>
+</div>
+
+<div class="card">
+    <button onclick="nextWeek()">➡️ الأسبوع التالي</button>
+</div>
+
+</div>
+
+<script>
+
+let state = {
+    money: 1000,
+    rep: 10,
+    clients: 0,
+    week: 1
+};
+
+const events = [
+    { text: "عميل جديد", effect: () => state.clients += 1 },
+    { text: "حملة ناجحة +100", effect: () => state.money += 100 },
+    { text: "خسارة سمعة", effect: () => state.rep -= 1 },
+    { text: "تكلفة مفاجئة -50", effect: () => state.money -= 50 },
+    { text: "عميل + سمعة", effect: () => { state.clients++; state.rep++; } },
+];
+
+function updateUI() {
+    document.getElementById("money").innerText = state.money;
+    document.getElementById("rep").innerText = state.rep;
+    document.getElementById("clients").innerText = state.clients;
+    document.getElementById("week").innerText = state.week;
+}
+
+function rollDice() {
+    let roll = Math.floor(Math.random() * 6) + 1;
+    let result = "";
+
+    if (roll <= 2) {
+        state.money -= 50;
+        result = "تضخم -50";
+    } else if (roll <= 4) {
+        state.money += 40;
+        result = "استثمار ناجح +40";
+    } else {
+        result = "استقرار";
+    }
+
+    document.getElementById("diceResult").innerText = result;
+    updateUI();
+}
+
+function drawEvent() {
+    let event = events[Math.floor(Math.random() * events.length)];
+    event.effect();
+    document.getElementById("eventText").innerText = event.text;
+    updateUI();
+}
+
+function nextWeek() {
+    state.week++;
+
+    if (state.week > 12) {
+        let roi = (state.money - 1000 + state.clients * 50) / 1000;
+        alert("انتهت اللعبة. ROI = " + roi.toFixed(2));
+        return;
+    }
+
+    updateUI();
+}
+
+updateUI();
+
+</script>
+
+</body>
+</html>
