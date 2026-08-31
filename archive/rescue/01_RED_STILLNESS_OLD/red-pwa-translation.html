@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>الهدوء القرمزي // ملف سري</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- إضافات PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff3b3b">
+
+  <style>
+    /* ... (جميع أنماط التصميم الحالية تبقى كما هي) ... */
+
+    /* أنماط جديدة للأزرار */
+    #installBtn {
+      background: linear-gradient(to right, #ff3b3b, #8a0000);
+      color: white;
+      border: 1px solid #ff5e5e;
+      margin-left: 10px;
+      transition: all 0.3s;
+    }
+
+    #installBtn:hover {
+      background: linear-gradient(to right, #ff5e5e, #ff3b3b);
+      box-shadow: 0 0 15px rgba(255, 59, 59, 0.7);
+    }
+
+    .translate-btn {
+      background: linear-gradient(to right, #3b3bff, #00008a);
+      color: white;
+      border: 1px solid #5e5eff;
+      transition: all 0.3s;
+    }
+
+    .translate-btn:hover {
+      background: linear-gradient(to right, #5e5eff, #3b3bff);
+      box-shadow: 0 0 15px rgba(59, 59, 255, 0.7);
+    }
+  </style>
+
+  <script>
+    // تسجيل Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js');
+      });
+    }
+  </script>
+</head>
+<body>
+  <div class="warning-bar">⚠️ [فئة التهديد: داخلي - المستوى 9] ⚠️</div>
+
+  <!-- أزرار التثبيت والترجمة -->
+  <div style="text-align: center; margin: 15px 0;">
+    <button id="installBtn" style="display:none; padding: 10px 20px; font-size: 16px; border-radius: 8px;">📲 تثبيت البداية</button>
+    <button class="translate-btn" onclick="translateToEnglish()" style="padding: 10px 20px; font-size: 16px; border-radius: 8px;">🌍 ترجمة للإنجليزية</button>
+  </div>
+
+  <div class="container">
+    <!-- ... (بقية المحتوى الحالي يبقى كما هو) ... -->
+  </div>
+
+  <script>
+    // كود تثبيت PWA
+    let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installBtn').style.display = 'inline-block';
+
+      document.getElementById('installBtn').addEventListener('click', () => {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(choiceResult => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('تم التثبيت');
+            document.getElementById('installBtn').textContent = '✓ تم التثبيت';
+            document.getElementById('installBtn').style.background = '#00aa00';
+          }
+          deferredPrompt = null;
+        });
+      });
+    });
+
+    // كود الترجمة
+    function translateToEnglish() {
+      const dictionary = {
+        "الهدوء القرمزي": "Crimson Stillness",
+        "ملف سري": "Classified File",
+        "احتواء نشط": "Containment Active",
+        "مستوى التهديد": "Threat Level",
+        "تثبيت البداية": "Install App",
+        "ترجمة للإنجليزية": "Translate",
+        "فئة التهديد: داخلي - المستوى 9": "Threat Class: Internal - Level 9",
+        "الحالة:": "Status:",
+        "الاسم الرمزي:": "Codename:",
+        "السمات الأساسية": "Core Attributes",
+        "إمكانية الانفجار:": "Explosion Potential:",
+        "التحكم المعرفي:": "Cognitive Control:",
+        "الضغط الداخلي:": "Internal Pressure:",
+        "خطر الانهيار:": "Collapse Risk:",
+        "تأخر الاستجابة:": "Response Delay:",
+        "إغلاق التحكم الذاتي:": "Self-Control Lock:",
+        "أنماط السلوك": "Behavioral Patterns",
+        "يستخدم المنطق لإخفاء التصدع العاطفي": "Uses logic to hide emotional cracks",
+        "يتجنب المواجهة المباشرة خلف شخصية هادئة": "Avoids direct confrontation behind a calm persona",
+        "يخزن الغضب المكبوت تحت بروتوكول \"أنا بخير\"": "Stores repressed anger under an \"I'm fine\" protocol",
+        "يظهر انضباطًا استثنائيًا كآلية دفاع": "Displays exceptional discipline as a defense mechanism",
+        "تحذيرات النظام": "System Warnings",
+        "\"قد ينفجر الموضوع إذا تم تجريده من إطار التحكم العقلي.\"": "\"Subject may explode if stripped of the mental control framework.\"",
+        "\"تعتمد بروتوكولات الاحتواء على الشعور بالذنب والكمال والخوف الداخلي.\"": "\"Containment protocols rely on guilt, perfectionism, and internal fear.\"",
+        "\"تتجاوز القوة الكامنة المعايير الآمنة. يوصى بالإفراج المراقب.\"": "\"Latent power exceeds safe standards. Controlled release recommended.\"",
+        "\"تم اكتشاف نقطة ضعف حرجة: الخوف من الكشف عن الذات الحقيقية\"": "\"Critical weakness detected: Fear of revealing true self\"",
+        "اقتباسات من الداخل": "Internal Quotes",
+        "كشف هوية الظل: المنضبط الزائف": "Shadow Identity Reveal: The False Disciplined",
+        "وصف الشخصية الحقيقية تحت القناع": "Description of the True Personality Under the Mask",
+        "نقاط التدمير الذاتي الخفية": "Hidden Self-Destruction Points",
+        "السلاح": "Weapon",
+        "الوصف": "Description",
+        "النتيجة": "Result",
+        "قناع العقلانية": "Mask of Rationality",
+        "تستخدم الذكاء لتتجنب الشعور": "Uses intelligence to avoid feeling",
+        "تحوّل جراحك إلى معادلات... هاربًا من الألم إلى النظرية.": "Turns your wounds into equations... fleeing pain into theory.",
+        "تأجيل المواجهة": "Postponing Confrontation",
+        "تقول \"مو الوقت المناسب\"": "You say \"Not the right time\"",
+        "تهرب، حتى من اللحظات اللي ممكن تغير كل شي": "You escape, even from moments that could change everything",
+        "الانغلاق العاطفي": "Emotional Shutdown",
+        "تخاف تكون ضعيف قدام الناس": "Afraid to appear weak in front of people",
+        "تعيش عزلة داخلية حتى لو بين مليون": "You live in internal isolation even among millions",
+        "مثالية مفرطة": "Excessive Perfectionism",
+        "ما تبدأ إلا لو شي كامل": "You don't start unless it's perfect",
+        "تقتل كل مشروع قبل ما يولد": "You kill every project before it's born",
+        "القراءة النفسية المتعمقة": "In-Depth Psychological Reading",
+        "نتيجة اختبار القتال الداخلي": "Internal Combat Test Result",
+        "إحصائيات القتال - النسخة الكاملة": "Combat Statistics - Full Version",
+        "تحليل الإحصائيات": "Statistics Analysis",
+        "الخاصية": "Attribute",
+        "التقييم /10": "Rating /10",
+        "تحليل الصدمة": "Trauma Analysis",
+        "قوة الانفجار": "Explosive Power",
+        "لديك القدرة على التمزق الكامل إذا قررت الضرب": "You have the ability to completely tear apart if you decide to strike",
+        "التحكم العقلي": "Mental Control",
+        "ذكي في تحليل المواقف، لكن عقلك أحيانًا سجنك": "Smart in analyzing situations, but your mind sometimes imprisons you",
+        "القابلية للانهيار": "Susceptibility to Collapse",
+        "تعيش فوق جرح غير مغلق وينزف تحت السطح": "You live over an unhealed wound that bleeds beneath the surface",
+        "التحمل تحت الضغط": "Endurance Under Pressure",
+        "تعمل وسط النار وتصمت حتى وأنت تحترق": "You work amidst fire and stay silent even as you burn",
+        "إدارة الصورة": "Image Management",
+        "بارع في إظهار \"أنا بخير\" حتى أثناء الانهيار الكامل": "Skilled at showing \"I'm fine\" even during complete collapse",
+        "رد الفعل المباشر": "Direct Reaction",
+        "تميل للهدوء الزائف حتى في المواقف التي تستحق الانفجار": "Tend towards false calm even in situations that deserve an explosion",
+        "الخوف من الفشل": "Fear of Failure",
+        "تخاف أن تُفضح كـ \"غير جاهز\" مما يؤدي إلى الإعداد المفرط": "Afraid of being exposed as \"not ready\" leading to over-preparation",
+        "الإرادة الخام": "Raw Willpower",
+        "لديك وقود، لكنك بحاجة لإشعال النار فيه": "You have fuel, but you need to ignite it",
+        "نوع الشخصية (النمط الأصلي)": "Personality Type (Archetype)",
+        "نقاط القوة الخارقة": "Superpower Strengths",
+        "تحديد داخلي حديدي وقت الأزمات": "Iron internal resolve during crises",
+        "هدوء يربك الأعداء": "Calmness that confuses enemies",
+        "وعي ذاتي نادر": "Rare self-awareness",
+        "قدرات استراتيجية استثنائية": "Exceptional strategic abilities",
+        "نقاط الضعف الخطيرة": "Critical Weaknesses",
+        "تأجيل المواجهة باسم \"النضج\"": "Postponing confrontation in the name of \"maturity\"",
+        "كبت مستمر يسبب انفجارات مدمرة": "Continuous repression causing destructive explosions",
+        "خوف لا واعي من أن تكون بكامل قوتك": "Unconscious fear of being at full strength",
+        "المثالية التي تشل الحركة": "Perfectionism that paralyzes action",
+        "فتح القيود: خطة التحرير": "Unlocking Restraints: Liberation Plan",
+        "المرحلة الأولى: تفكيك الأقنعة": "Phase 1: Dismantling the Masks",
+        "تعترف يوميًا أن \"التحكم\" قيد وليس فضيلة": "Admit daily that \"control\" is a restraint, not a virtue",
+        "تحديد ثلاث مواقف تلبس فيها قناع العقلانية وتزيله عمدًا": "Identify three situations where you wear the rationality mask and intentionally remove it",
+        "تسمح لنفسك بضعف واحد أمام شخص تثق فيه كل أسبوع": "Allow yourself one moment of weakness in front of a trusted person each week",
+        "المرحلة الثانية: تفجير السدود": "Phase 2: Blasting the Dams",
+        "تختار مشروعًا ناقصًا وتطلقه كما هو (بدون تحضير مفرط)": "Choose an incomplete project and launch it as is (without over-preparation)",
+        "تخلق موقف مواجهة واحدة أسبوعيًا مع شيء تخافه": "Create one confrontation situation per week with something you fear",
+        "تخصص 10 دقائق يوميًا لكتابة غضبك على ورقة ثم إحراقها": "Dedicate 10 minutes daily to writing your anger on paper then burning it",
+        "المرحلة الثالثة: إطلاق الأسد": "Phase 3: Releasing the Lion",
+        "تتبنى هوية \"الأسد المكمم\" كقوة وليس ضعف": "Embrace the \"Muzzled Lion\" identity as a strength, not a weakness",
+        "تطلق العنان لطاقة واحدة تخبئها خوفًا من رد الفعل": "Unleash one energy you're hiding for fear of reaction",
+        "تبني نظامًا جديدًا قائمًا على التدفق لا التحكم": "Build a new system based on flow, not control",
+        "تحذير: يظهر الموضوع إمكانية عالية للانفجار النفسي إذا تعرض لمواجهة صريحة أو فقدان الهوية.": "Warning: Subject shows high potential for psychological explosion if exposed to direct confrontation or loss of identity.",
+        "الإفراج عن الموضوع": "Release Subject",
+        "سيقوم النظام ببدء بروتوكول الإفراج المراقب": "System will initiate controlled release protocol",
+        "[⚠️ الإفراج عن الموضوع ⚠️]": "[⚠️ Release Subject ⚠️]"
+      };
+
+      document.querySelectorAll("*").forEach(node => {
+        if (node.childNodes.length === 1 && node.childNodes[0].nodeType === 3) {
+          const text = node.textContent.trim();
+          if (dictionary[text]) {
+            node.textContent = dictionary[text];
+          }
+        }
+      });
+    }
+
+    // الكود الأصلي للزر
+    document.addEventListener('DOMContentLoaded', function() {
+      const button = document.querySelector('.button');
+      const container = document.querySelector('.container');
+
+      button.addEventListener('click', function() {
+        // ... (الكود الأصلي للزر يبقى كما هو) ...
+      });
+    });
+  </script>
+</body>
+</html>

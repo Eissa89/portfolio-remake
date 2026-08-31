@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عيسى | نظام القيادة الذاتية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* الألوان الأساسية - الوضع الافتراضي (Cyan/Cyber) */
+            --bg-primary: #050505;
+            --bg-secondary: #0a0a0f;
+            --card-bg: rgba(20, 20, 25, 0.6);
+            --text-main: #e0e0e0;
+            --text-muted: #909090;
+
+            --accent-color: #00bcd4; /* اللون الرئيسي المتغير */
+            --accent-glow: rgba(0, 188, 212, 0.4);
+            --secondary-accent: #ff3d00; /* لون الحسم/القوة */
+
+            --border-color: rgba(255, 255, 255, 0.1);
+            --glass: blur(10px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) var(--bg-primary);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(0, 188, 212, 0.05) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(255, 61, 0, 0.03) 0%, transparent 25%);
+        }
+
+        /* تنسيق الخطوط البرمجية */
+        .mono { font-family: 'Fira Code', monospace; }
+
+        /* --- شريط التنقل (Nav) --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: var(--glass);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text-main);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            right: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        /* --- Header / Hero --- */
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-glitch {
+            font-size: 5rem;
+            font-weight: 900;
+            position: relative;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .typewriter-container {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            min-height: 1.6em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cursor {
+            width: 10px;
+            height: 3px;
+            background: var(--accent-color);
+            animation: blink 0.8s infinite;
+        }
+
+        /* --- Theme Switcher --- */
+        .system-controls {
+            position: absolute;
+            bottom: 30px;
+            display: flex;
+            gap: 15px;
+            padding: 10px;
+            background: var(--card-bg);
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+        }
+
+        .color-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s;
+            border: 2px solid transparent;
+        }
+        .color-dot:hover { transform: scale(1.2); border-color: #fff; }
+
+        /* --- Sections General --- */
+        section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        section.visible { opacity: 1; transform: translateY(0); }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-title::before {
+            content: '#';
+            color: var(--accent-color);
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* --- Summary & RPG Roles --- */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+        }
+
+        .summary-card {
+            background: var(--card-bg);
+            border-right: 3px solid var(--accent-color);
+            padding: 2rem;
+            border-radius: 4px;
+            font-size: 1.1rem;
+        }
+
+        .rpg-system-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .role-tag {
+            display: inline-block;
+            padding: 5px 12px;
+            margin: 5px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: default;
+            transition: 0.3s;
+        }
+        .role-tag:hover {
+            border-color: var(--accent-color);
+            background: var(--accent-glow);
+            color: #fff;
+        }
+
+        /* --- Stats / Skills --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s;
+        }
+
+        .stat-item:hover { transform: translateY(-5px); border-color: var(--accent-color); }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: #222;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-color), var(--secondary-accent));
+            width: 0;
+            transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+        }
+
+        /* --- Projects --- */
+        .projects-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .project-node {
+            background: linear-gradient(145deg, var(--bg-secondary), #0f0f15);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .project-node:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .node-header {
+            font-family: 'Fira Code', monospace;
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .node-status {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 2px;
+            background: rgba(255,255,255,0.1);
+        }
+        .status-active { color: #00ff88; background: rgba(0, 255, 136, 0.1); }
+        .status-plan { color: #ffcc00; background: rgba(255, 204, 0, 0.1); }
+
+        /* --- Modal (Project Details) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal-content {
+            background: #111;
+            width: 90%;
+            max-width: 600px;
+            border: 1px solid var(--accent-color);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 30px var(--accent-glow);
+            transform: scale(0.9);
+            transition: transform 0.3s;
+            position: relative;
+        }
+
+        .modal-title {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-family: 'Fira Code', monospace;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.5rem;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            left: 20px; /* Arabic RTL */
+            color: #fff;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* --- Vision & Footer --- */
+        .vision-box {
+            text-align: center;
+            padding: 4rem;
+            border: 1px dashed var(--border-color);
+            background: radial-gradient(circle, rgba(255,255,255,0.02) 0%, transparent 70%);
+        }
+
+        .vision-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: var(--text-main);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: #020202;
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        /* --- Animations --- */
+        @keyframes blink { 50% { opacity: 0; } }
+
+        @media (max-width: 768px) {
+            .hero-glitch { font-size: 3rem; }
+            .about-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; } /* Simplified for mobile */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="modal-overlay" id="projectModal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="closeModal()"><i class="fas fa-times"></i></div>
+            <h2 class="modal-title" id="m-title">Project Name</h2>
+            <div id="m-desc" style="margin-bottom: 20px; color: #bbb;"></div>
+            <div class="mono" style="font-size: 0.8rem; color: var(--accent-color);">
+                > System Status: <span id="m-status">Active</span>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <div class="nav-logo">&lt;ISSA /&gt;</div>
+        <div class="nav-links">
+            <a href="#about" class="nav-link">الملف</a>
+            <a href="#skills" class="nav-link">القدرات</a>
+            <a href="#projects" class="nav-link">العمليات</a>
+            <a href="#vision" class="nav-link">الرؤية</a>
+        </div>
+    </nav>
+
+    <header>
+        <h1 class="hero-glitch">عيسى</h1>
+        <div class="typewriter-container mono">
+            <span id="typing-text"></span>
+            <span class="cursor"></span>
+        </div>
+
+        <div class="system-controls">
+            <div class="color-dot" style="background: #00bcd4;" onclick="setTheme('#00bcd4', '#ff3d00')" title="وضع التحليل (أزرق)"></div>
+            <div class="color-dot" style="background: #6d5baa;" onclick="setTheme('#6d5baa', '#00bcd4')" title="وضع الإبداع (بنفسجي)"></div>
+            <div class="color-dot" style="background: #2e8b57;" onclick="setTheme('#2e8b57', '#3aa17d')" title="وضع التنفيذ (أخضر)"></div>
+            <div class="color-dot" style="background: #daa520;" onclick="setTheme('#daa520', '#b8860b')" title="وضع القيادة (ذهبي)"></div>
+        </div>
+    </header>
+
+    <section id="about">
+        <h2 class="section-title">بيانات الشخصية</h2>
+        <div class="about-grid">
+            <div class="summary-card">
+                <p>
+                    شخصية تحليلية ذات طاقة فكرية عالية، أعمل على تحويل التفكير العميق إلى أنظمة عملية.
+                    أتحرك بمرونة بين <strong style="color:var(--accent-color)">العقلانية التقنية</strong> (Code, Systems)
+                    و <strong style="color:var(--secondary-accent)">الإبداع الإنساني</strong> (الشعر، السلوك).
+                    هدفي ليس مجرد الإنجاز، بل بناء "النسخة الحادة" القادرة على القيادة الذاتية.
+                </p>
+            </div>
+
+            <div class="rpg-system-box">
+                <h3 class="mono" style="margin-bottom:15px; font-size:1rem; color:var(--text-muted);">
+                    <i class="fas fa-dice-d20"></i> Active Roles (RPG System)
+                </h3>
+                <div>
+                    <span class="role-tag">المفكر (الأزرق)</span>
+                    <span class="role-tag">المبدع (البنفسجي)</span>
+                    <span class="role-tag">المنفذ (الأخضر)</span>
+                    <span class="role-tag">القائد (الذهبي)</span>
+                    <span class="role-tag">المراقب (الرمادي)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills">
+        <h2 class="section-title">إحصائيات النظام (Stats)</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-header">
+                    <span><i class="fas fa-brain"></i> التحليل الذهني العميق</span>
+                    <span class="mono">95%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" data-width="95%"></div></div>
+                <p style="font-size:0.8rem; color:#777; margin-top:10px;">كشف الأنماط الفكرية، الحلقات السلوكية، والنقاط العمياء.</p>
+            </div>
+            <div class="stat-item">
+                <div class="stat-header">
+                    <span><i class="fas fa-pen-nib"></i> الكتابة والشعر</span>
+                    <span class="mono">88%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" data-width="88%"></div></div>
+                <p style="font-size:0.8rem; color:#777; margin-top:10px;">صياغة المفاهيم المعقدة في قوالب لغوية مؤثرة.</p>
+            </div>
+            <div class="stat-item">
+                <div class="stat-header">
+                    <span><i class="fas fa-code"></i> التطوير الرقمي (Web)</span>
+                    <span class="mono">85%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" data-width="85%"></div></div>
+                <p style="font-size:0.8rem; color:#777; margin-top:10px;">HTML/CSS، بناء واجهات عملية، وتطبيقات PWA.</p>
+            </div>
+            <div class="stat-item">
+                <div class="stat-header">
+                    <span><i class="fas fa-shield-alt"></i> الانضباط الذاتي</span>
+                    <span class="mono">98%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" data-width="98%"></div></div>
+                <p style="font-size:0.8rem; color:#777; margin-top:10px;">القدرة على العمل دون إشراف خارجي والالتزام بالخطط.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <h2 class="section-title">سجل العمليات (Projects)</h2>
+        <div class="projects-wrapper">
+            <div class="project-node" onclick="openProject('tracker')">
+                <div class="node-header">
+                    <span>&lt;RPG Tracker /&gt;</span>
+                    <span class="node-status status-plan">Pending</span>
+                </div>
+                <h3>متتبع التطور الذهني</h3>
+                <p style="font-size:0.9rem; color:#999; margin-top:5px;">تحويل النمو الشخصي إلى أرقام وبيانات.</p>
+            </div>
+
+            <div class="project-node" onclick="openProject('innerLead')">
+                <div class="node-header">
+                    <span>&lt;System: Inner Lead /&gt;</span>
+                    <span class="node-status status-active">Active</span>
+                </div>
+                <h3>نظام القيادة الداخلية</h3>
+                <p style="font-size:0.9rem; color:#999; margin-top:5px;">تقسيم الشخصية لأدوار ملونة لإدارة النفس.</p>
+            </div>
+
+            <div class="project-node" onclick="openProject('web')">
+                <div class="node-header">
+                    <span>&lt;Web: The Beginning /&gt;</span>
+                    <span class="node-status status-active">Online</span>
+                </div>
+                <h3>مشروع "البداية"</h3>
+                <p style="font-size:0.9rem; color:#999; margin-top:5px;">موقع شخصي PWA يدعم العمل دون إنترنت.</p>
+            </div>
+
+            <div class="project-node" onclick="openProject('protocol90')">
+                <div class="node-header">
+                    <span>&lt;Protocol: 90 Days /&gt;</span>
+                    <span class="node-status status-active">Running</span>
+                </div>
+                <h3>بروتوكول 90 يوم</h3>
+                <p style="font-size:0.9rem; color:#999; margin-top:5px;">خطة مكثفة لكسر الخوف وبناء الحسم.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="vision">
+        <div class="vision-box">
+            <i class="fas fa-eye" style="font-size: 3rem; color: var(--accent-color); margin-bottom: 20px;"></i>
+            <p class="vision-quote">
+                "الانتقال من التفاعل مع الظروف إلى قيادتها. بناء نسخة ذاتية حادة، منضبطة، وقادرة على التأثير من خلال الفكر، الكلمة، والنظام."
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <p class="mono">System Operational | Developed by Issa &copy; 2026</p>
+    </footer>
+
+    <script>
+        // --- بيانات المشاريع (للنوافذ المنبثقة) ---
+        const projectsData = {
+            tracker: {
+                title: "RPG Tracker Application",
+                desc: "تطبيق ويب وجوال لتتبع التقدم الذهني والسلوكي. الهدف هو تحويل الحياة اليومية إلى نظام RPG حيث تكسب نقاطاً مقابل الالتزام بالعادات. التقنيات المقترحة: HTML/JS للواجهة، و React Native للتطبيق.",
+                status: "قيد التخطيط (Planning)"
+            },
+            innerLead: {
+                title: "System: Inner Lead",
+                desc: "نظام نفسي يقسم الذات إلى أدوار: القائد (القرار)، المفكر (التحليل)، المبدع (الخيال). يتم منح كل دور 'لون' ومهام محددة لمنع التشتت الداخلي. حالياً يطبق ورقياً وعبر جداول تتبع.",
+                status: "قيد التنفيذ (Active)"
+            },
+            web: {
+                title: "Web Project: The Beginning",
+                desc: "الموقع الذي تتصفحه الآن. تم بناؤه ليكون سريعاً جداً، يدعم PWA (تطبيق ويب تقدمي) ليعمل كالتطبيق على الهاتف، ويدعم تعدد اللغات مستقبلاً.",
+                status: "يعمل (Online)"
+            },
+            protocol90: {
+                title: "Protocol: 90 Days",
+                desc: "برنامج صارم لمدة 3 أشهر يهدف لإعادة ضبط الدوبامين، بناء الانضباط الحديدي، وكسر حواجز الخوف الاجتماعي والنفسي. يتضمن جداول محاسبة يومية.",
+                status: "جاري التنفيذ (Running)"
+            }
+        };
+
+        // --- الكتابة التلقائية (Typewriter) ---
+        const textElement = document.getElementById('typing-text');
+        const roles = ["طالب", "كاتب وشاعر", "مطور مستقل", "محلل استراتيجي"];
+        let roleIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function type() {
+            const currentRole = roles[roleIndex];
+            if (isDeleting) {
+                textElement.textContent = currentRole.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                textElement.textContent = currentRole.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            if (!isDeleting && charIndex === currentRole.length) {
+                isDeleting = true;
+                setTimeout(type, 2000);
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                roleIndex = (roleIndex + 1) % roles.length;
+                setTimeout(type, 500);
+            } else {
+                setTimeout(type, isDeleting ? 50 : 100);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', type);
+
+        // --- التحكم في النوافذ (Modal Logic) ---
+        function openProject(key) {
+            const data = projectsData[key];
+            document.getElementById('m-title').textContent = data.title;
+            document.getElementById('m-desc').textContent = data.desc;
+            document.getElementById('m-status').textContent = data.status;
+
+            const modal = document.getElementById('projectModal');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.style.opacity = '1'; }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('projectModal');
+            modal.style.opacity = '0';
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
+
+        // إغلاق النافذة عند النقر خارجها
+        document.getElementById('projectModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // --- تبديل الثيمات (Theme Switcher) ---
+        function setTheme(primary, secondary) {
+            document.documentElement.style.setProperty('--accent-color', primary);
+            document.documentElement.style.setProperty('--secondary-accent', secondary);
+            document.documentElement.style.setProperty('--accent-glow', primary + '40'); // Add transparency
+        }
+
+        // --- حركات الظهور (Scroll Animations) ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // تحريك أشرطة المهارات عند الوصول إليها
+                    if (entry.target.id === 'skills') {
+                        const bars = entry.target.querySelectorAll('.progress-fill');
+                        bars.forEach(bar => {
+                            bar.style.width = bar.getAttribute('data-width');
+                        });
+                    }
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('section').forEach(sec => observer.observe(sec));
+    </script>
+</body>
+</html>

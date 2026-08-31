@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عيسى | نظام التحكم التحليلي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #09090b;
+            --bg-surface: #18181b;
+            --bg-surface-hover: #27272a;
+            --accent: #00f0ff;
+            --text-primary: #f4f4f5;
+            --text-secondary: #a1a1aa;
+            --border-color: #3f3f46;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        /* Container & Grid Layout */
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar / Identity */
+        .identity-panel {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-right: 4px solid var(--accent);
+            padding: 2rem;
+            position: sticky;
+            top: 2rem;
+            height: max-content;
+        }
+
+        .identity-panel h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .role-badge {
+            display: inline-block;
+            background-color: rgba(0, 240, 255, 0.1);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+
+        .trait-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .trait-list li {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .trait-list li::before {
+            content: "■";
+            color: var(--accent);
+            margin-left: 0.75rem;
+            font-size: 0.7rem;
+        }
+
+        /* Main Content Area */
+        .core-systems {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .section-header {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Matrices & Cards */
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .system-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            transition: var(--transition);
+            cursor: default;
+        }
+
+        .system-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .system-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .system-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Interactive Decision Framework */
+        .framework-container {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+        }
+
+        .step-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .step-btn {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .step-btn.active, .step-btn:hover {
+            background-color: var(--accent);
+            color: var(--bg-base);
+            border-color: var(--accent);
+        }
+
+        .step-content {
+            display: none;
+            background-color: var(--bg-base);
+            padding: 1.5rem;
+            border-right: 3px solid var(--accent);
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Data Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table th, .data-table td {
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            text-align: right;
+        }
+
+        .data-table th {
+            background-color: var(--bg-surface-hover);
+            color: var(--text-primary);
+        }
+
+        .data-table td {
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard">
+
+        <aside class="identity-panel">
+            <h1>عيسى</h1>
+            <div class="role-badge">مهندس أنظمة نفسية | طالب</div>
+
+            <ul class="trait-list">
+                <li>تحليلي ومفكر استراتيجي</li>
+                <li>تفكيك عميق للأفكار والأنظمة</li>
+                <li>بناء أنظمة للفهم والتطوير الذاتي</li>
+            </ul>
+
+            <div style="margin-top: 2rem;">
+                <h3 style="font-size: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">الهدف الأساسي</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    تطوير سيطرة معرفية ونفسية على الذات والظروف عبر أنظمة تفكير منظمة.
+                </p>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <h3 style="font-size: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">أدوات الإنتاجية</h3>
+                <ul class="trait-list">
+                    <li>أنظمة تتبع (RPG Trackers)</li>
+                    <li>لوحات تقدم قياسية</li>
+                    <li>خطط: 7 أيام / 21 يوم / 90 يوم</li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="core-systems">
+
+            <section>
+                <h2 class="section-header">01. أعمدة المحتوى والأنظمة</h2>
+                <div class="matrix-grid">
+                    <div class="system-card">
+                        <h3>التحليل النفسي الذاتي</h3>
+                        <p>تفكيك المشاعر، الخوف، الهوية، والدوافع الداخلية وتحويلها إلى بيانات قابلة للقراءة.</p>
+                    </div>
+                    <div class="system-card">
+                        <h3>الأنظمة العقلية</h3>
+                        <p>إنشاء أطر عمل (Frameworks) لفهم التفكير وهندسة اتخاذ القرار الإستراتيجي.</p>
+                    </div>
+                    <div class="system-card">
+                        <h3>القيادة الذاتية</h3>
+                        <p>تحويل الفرد من حالة رد الفعل العاطفي إلى التحكم الواعي والمنهجي.</p>
+                    </div>
+                    <div class="system-card">
+                        <h3>التجارب التحويلية</h3>
+                        <p>خطط وتحديات زمنية لإعادة بناء السلوك وفق ميكانيكيات RPG وأنظمة التتبع.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="section-header">02. سيكولوجية الجمهور والتحول</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>الحالة الحالية (Pain Points)</th>
+                            <th>المحرك النفسي (Drivers)</th>
+                            <th>التحول المستهدف (Transformation)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>فقدان الهوية والتشتت</td>
+                            <td>البحث عن معنى وفهم أعمق</td>
+                            <td>بناء هوية ذاتية صلبة وواضحة</td>
+                        </tr>
+                        <tr>
+                            <td>الخوف والتردد</td>
+                            <td>الرغبة في السيطرة على الحياة</td>
+                            <td>السيطرة عبر نماذج اتخاذ قرار</td>
+                        </tr>
+                        <tr>
+                            <td>الضعف الداخلي وعدم الانضباط</td>
+                            <td>الخروج من حالة رد الفعل</td>
+                            <td><strong>من شخص تقوده الظروف إلى شخص يقود نفسه.</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section>
+                <h2 class="section-header">03. هيكل اتخاذ القرار (System-Driven Execution)</h2>
+                <div class="framework-container">
+                    <div class="step-buttons" id="stepButtons">
+                        <button class="step-btn active" onclick="showStep(1)">1. التحليل</button>
+                        <button class="step-btn" onclick="showStep(2)">2. التفكيك</button>
+                        <button class="step-btn" onclick="showStep(3)">3. الأنماط</button>
+                        <button class="step-btn" onclick="showStep(4)">4. التصميم</button>
+                        <button class="step-btn" onclick="showStep(5)">5. الاختبار</button>
+                    </div>
+
+                    <div id="step1" class="step-content active">
+                        <h4 style="color: var(--accent); margin-bottom: 0.5rem;">تحليل المشكلة</h4>
+                        <p>عزل المشكلة عن العواطف وتحديد ماهيتها بدقة كبيانات خام غير معالجة.</p>
+                    </div>
+                    <div id="step2" class="step-content">
+                        <h4 style="color: var(--accent); margin-bottom: 0.5rem;">تفكيك المكونات</h4>
+                        <p>تقسيم المشكلة المعقدة إلى عناصرها الأولية لتسهيل التعامل مع كل جزء على حدة.</p>
+                    </div>
+                    <div id="step3" class="step-content">
+                        <h4 style="color: var(--accent); margin-bottom: 0.5rem;">تحديد الأنماط</h4>
+                        <p>البحث عن التكرار السلوكي أو الهيكلي في المشكلة لربطها بنماذج عقلية سابقة.</p>
+                    </div>
+                    <div id="step4" class="step-content">
+                        <h4 style="color: var(--accent); margin-bottom: 0.5rem;">تصميم النظام</h4>
+                        <p>بناء إطار عمل (Framework) للحل وتحويله إلى مهام يومية قابلة للقياس والتتبع.</p>
+                    </div>
+                    <div id="step5" class="step-content">
+                        <h4 style="color: var(--accent); margin-bottom: 0.5rem;">الاختبار العملي</h4>
+                        <p>تطبيق النظام المصمم وقياس المخرجات لتعديل النظام بناءً على النتائج الفعلية.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // Logic for the Interactive Decision Framework
+        function showStep(stepNumber) {
+            // Hide all steps
+            const contents = document.querySelectorAll('.step-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.step-btn');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // Show selected step and highlight button
+            document.getElementById(`step${stepNumber}`).classList.add('active');
+            buttons[stepNumber - 1].classList.add('active');
+        }
+    </script>
+</body>
+</html>

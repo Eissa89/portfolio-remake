@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Side Nav — Animated Links</title>
+<style>
+  :root{
+    --bg:#0f1724;
+    --panel:#0b1220;
+    --accent:#06b6d4;
+    --muted:#94a3b8;
+    --text:#e6eef6;
+    --transition: 280ms;
+    --stagger-step: 40ms; /* تغيير وقت التأخير بين العناصر */
+    --radius:14px;
+  }
+
+  /* basic page */
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(180deg,#071029 0%, #071827 100%);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:24px;
+    padding:32px;
+  }
+
+  /* trigger button */
+  .nav-toggle{
+    appearance:none;
+    border:0;
+    background:linear-gradient(90deg,var(--accent),#38bdf8);
+    color:#042028;
+    font-weight:700;
+    padding:12px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    box-shadow: 0 6px 18px rgba(4,20,35,.6);
+  }
+
+  /* overlay when nav open */
+  .overlay{
+    position:fixed;
+    inset:0;
+    background: rgba(2,6,23,0.6);
+    opacity:0;
+    pointer-events:none;
+    transition: opacity var(--transition) ease;
+  }
+  .overlay.active{
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  /* side panel */
+  .side-panel{
+    --w:320px;
+    position:fixed;
+    top:24px;
+    left:24px;
+    width:var(--w);
+    max-width: calc(100% - 48px);
+    height:calc(100% - 48px);
+    background:linear-gradient(180deg,var(--panel), #071022);
+    border-radius: var(--radius);
+    box-shadow: 0 18px 50px rgba(2,6,23,.7);
+    transform: translateX(-18px) scale(.995);
+    opacity:0;
+    transition: transform var(--transition) cubic-bezier(.2,.9,.3,1), opacity var(--transition);
+    display:flex;
+    flex-direction:column;
+    padding:18px;
+    gap:12px;
+    z-index:60;
+  }
+  .side-panel.open{
+    transform: translateX(0) scale(1);
+    opacity:1;
+  }
+
+  /* header */
+  .panel-head{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .brand{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .logo{
+    width:44px;
+    height:44px;
+    border-radius:10px;
+    background:linear-gradient(135deg,#0ea5a9,#06b6d4);
+    display:grid;
+    place-items:center;
+    color:#042028;
+    font-weight:800;
+    font-size:18px;
+    box-shadow: 0 6px 16px rgba(6,22,30,.45);
+  }
+  .title{font-size:16px;font-weight:700}
+  .subtitle{font-size:12px;color:var(--muted);margin-top:-2px}
+
+  .close-btn{
+    background:transparent;
+    border:0;
+    color:var(--muted);
+    font-size:16px;
+    padding:8px;
+    cursor:pointer;
+    border-radius:8px;
+  }
+  .close-btn:focus{outline:2px solid rgba(6,182,212,.18)}
+
+  /* search */
+  .search-wrap{
+    display:flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,.02);
+    padding:10px;border-radius:10px;
+  }
+  .search-wrap input{
+    border:0;background:transparent;color:var(--text);
+    font-size:14px;flex:1;padding:4px;
+  }
+  .search-wrap input::placeholder{color:var(--muted)}
+
+  /* content groups */
+  .group{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:4px;
+  }
+  .group-title{
+    font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
+
+  /* links list */
+  .nav-list{
+    list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;
+  }
+  .nav-item{
+    transform: translateX(-10px);
+    opacity:0;
+    transition: transform var(--transition) cubic-bezier(.2,.9,.3,1), opacity var(--transition);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  /* when panel open, animate items in with stagger via inline style from JS */
+  .side-panel.open .nav-item{
+    transform: translateX(0);
+    opacity:1;
+  }
+  .nav-link{
+    display:flex;gap:10px;align-items:center;padding:12px;
+    text-decoration:none;color:var(--text);
+    background:linear-gradient(90deg, rgba(255,255,255,0.01), transparent);
+    border:1px solid rgba(255,255,255,0.02);
+    border-radius:8px;
+    transition: transform 120ms ease, background 160ms ease;
+  }
+  .nav-link:active{transform:scale(.997)}
+  .nav-link:focus{outline:2px solid rgba(6,182,212,.18)}
+  .nav-icon{
+    width:36px;height:36px;border-radius:8px;display:grid;place-items:center;
+    background: rgba(255,255,255,0.02);font-weight:700;color:var(--accent);
+  }
+  .nav-meta{display:flex;flex-direction:column}
+  .nav-title{font-size:14px;font-weight:700}
+  .nav-desc{font-size:12px;color:var(--muted);margin-top:2px}
+
+  /* contact button */
+  .contact{
+    margin-top:auto;
+  }
+  .contact .nav-link{
+    justify-content:center;
+    font-weight:800;
+    letter-spacing:.02em;
+  }
+
+  /* accessibility & reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    :root{--transition: 0ms; --stagger-step: 0ms}
+    .side-panel,.nav-item,.overlay{transition:none!important}
+  }
+
+  /* small screens tweak */
+  @media (max-width:520px){
+    .side-panel{left:12px;right:12px;width:auto;height:calc(100% - 24px);top:12px;border-radius:12px}
+  }
+</style>
+</head>
+<body>
+
+<button class="nav-toggle" id="openNav" aria-controls="sideNav" aria-expanded="false">فتح القائمة</button>
+
+<div class="overlay" id="overlay" tabindex="-1" aria-hidden="true"></div>
+
+<aside id="sideNav" class="side-panel" aria-hidden="true" role="dialog" aria-label="القائمة الجانبية">
+  <div class="panel-head">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">ب</div>
+      <div>
+        <div class="title">البداية</div>
+        <div class="subtitle">تنقّل سريع</div>
+      </div>
+    </div>
+    <button class="close-btn" id="closeNav" aria-label="إغلاق القائمة">✕</button>
+  </div>
+
+  <!-- Search (sticky top element) -->
+  <div class="search-wrap" role="search">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.6"/></svg>
+    <input id="navSearch" type="search" placeholder="ابحث في الوصفات، المكونات..." aria-label="بحث" />
+  </div>
+
+  <!-- grouped links -->
+  <div class="group" aria-hidden="false">
+    <div class="group-title">التصنيف</div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-item" data-index="0">
+        <a class="nav-link" href="#search" tabindex="0">
+          <div class="nav-icon">S</div>
+          <div class="nav-meta">
+            <div class="nav-title">Search</div>
+            <div class="nav-desc">بحث سريع</div>
+          </div>
+        </a>
+      </li>
+
+      <li class="nav-item" data-index="1">
+        <a class="nav-link" href="#categories" tabindex="0">
+          <div class="nav-icon">C</div>
+          <div class="nav-meta">
+            <div class="nav-title">Categories</div>
+            <div class="nav-desc">تصفح حسب الفئة</div>
+          </div>
+        </a>
+      </li>
+
+      <li class="nav-item" data-index="2">
+        <a class="nav-link" href="#ingredients" tabindex="0">
+          <div class="nav-icon">I</div>
+          <div class="nav-meta">
+            <div class="nav-title">Ingredients</div>
+            <div class="nav-desc">المكونات الشائعة</div>
+          </div>
+        </a>
+      </li>
+
+      <li class="nav-item" data-index="3">
+        <a class="nav-link" href="#area" tabindex="0">
+          <div class="nav-icon">A</div>
+          <div class="nav-meta">
+            <div class="nav-title">Area</div>
+            <div class="nav-desc">المنطقة / المطبخ</div>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- contact last -->
+  <div class="contact">
+    <ul class="nav-list">
+      <li class="nav-item" data-index="4">
+        <a class="nav-link" href="#contact" tabindex="0">
+          <div class="nav-icon">✉</div>
+          <div class="nav-meta">
+            <div class="nav-title">Contact Us</div>
+            <div class="nav-desc">اسألنا عن شيء</div>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<script>
+(function(){
+  const openBtn = document.getElementById('openNav');
+  const closeBtn = document.getElementById('closeNav');
+  const panel = document.getElementById('sideNav');
+  const overlay = document.getElementById('overlay');
+  const navItems = Array.from(panel.querySelectorAll('.nav-item'));
+  const transitionMs = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--transition')) || 280;
+  const step = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--stagger-step')) || 40;
+
+  let lastActive = document.activeElement;
+
+  function openNav(){
+    // set aria
+    panel.classList.add('open');
+    overlay.classList.add('active');
+    openBtn.setAttribute('aria-expanded','true');
+    panel.setAttribute('aria-hidden','false');
+
+    // apply staggered delays
+    navItems.forEach((it,i)=>{
+      const delay = i * step;
+      it.style.transitionDelay = `${delay}ms`;
+    });
+
+    // move focus to first focusable inside panel
+    setTimeout(()=> {
+      const first = panel.querySelector('input, a, button');
+      if(first) first.focus();
+    }, transitionMs/2);
+
+    document.addEventListener('keydown', onKeyDown);
+    trapFocus(panel);
+  }
+
+  function closeNav(){
+    panel.classList.remove('open');
+    overlay.classList.remove('active');
+    openBtn.setAttribute('aria-expanded','false');
+    panel.setAttribute('aria-hidden','true');
+
+    // remove delays after close so next open restarts clean
+    navItems.forEach((it)=> it.style.transitionDelay = '');
+    document.removeEventListener('keydown', onKeyDown);
+    releaseTrap();
+    // return focus
+    if(lastActive && typeof lastActive.focus === 'function') lastActive.focus();
+  }
+
+  openBtn.addEventListener('click', (e)=>{
+    lastActive = document.activeElement;
+    openNav();
+  });
+  closeBtn.addEventListener('click', closeNav);
+  overlay.addEventListener('click', closeNav);
+
+  function onKeyDown(e){
+    if(e.key === 'Escape' || e.key === 'Esc'){
+      closeNav();
+    }
+    // Enter on overlay (for some AT)
+    if(e.key === 'Tab') {
+      // trapFocus handles it
+    }
+  }
+
+  /* Basic focus trap implementation */
+  let focusable = [];
+  let trapHandler = null;
+  function trapFocus(container){
+    focusable = Array.from(container.querySelectorAll('a[href], button, textarea, input, select'))
+      .filter(el => !el.hasAttribute('disabled') && el.tabIndex !== -1);
+    if(!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length -1];
+
+    trapHandler = function(e){
+      if(e.key !== 'Tab') return;
+      if(e.shiftKey){
+        if(document.activeElement === first){
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if(document.activeElement === last){
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener('keydown', trapHandler);
+  }
+  function releaseTrap(){
+    if(trapHandler) document.removeEventListener('keydown', trapHandler);
+    trapHandler = null;
+    focusable = [];
+  }
+
+  // accessibility: allow Enter key on open button
+  openBtn.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      openNav();
+    }
+  });
+
+  // simple progressive-enhancement for reduced-motion: if user prefers reduced motion, unset delays
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if(mq.matches){
+    navItems.forEach(it => it.style.transitionDelay = '0ms');
+  }
+
+  // Optional: keyboard quick-search focus when pressing '/' globally
+  window.addEventListener('keydown', (e)=>{
+    if(e.key === '/' && !panel.classList.contains('open')){
+      e.preventDefault();
+      openNav();
+      setTimeout(()=> {
+        const input = document.getElementById('navSearch');
+        if(input) input.focus();
+      }, transitionMs/2);
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>

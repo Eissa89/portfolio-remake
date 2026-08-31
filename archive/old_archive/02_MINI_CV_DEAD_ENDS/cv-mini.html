@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>عيسى | أداة قيادة داخلية</title>
+
+  <meta name="description" content="أداة تُستخدم لاتخاذ قرار أوضح وتقليل التردد.">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Fira+Code&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #050507;
+      --card: rgba(20,20,30,0.55);
+      --text: #ffffff;
+      --muted: #b0b0c0;
+      --accent: #00f2ff;
+      --border: rgba(255,255,255,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Cairo", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.9;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    .hero p {
+      margin-top: 15px;
+      font-family: "Fira Code", monospace;
+      font-size: 1.1rem;
+      color: var(--accent);
+    }
+
+    /* CARD */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 40px;
+      backdrop-filter: blur(14px);
+    }
+
+    .card p {
+      font-size: 1.1rem;
+      color: #eee;
+    }
+
+    .accent {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .question {
+      margin: 30px 0;
+      padding: 20px;
+      border-right: 4px solid var(--accent);
+      background: rgba(0,242,255,0.05);
+      font-weight: 600;
+      font-size: 1.15rem;
+    }
+
+    footer {
+      margin-top: 50px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-family: "Fira Code", monospace;
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 {
+        font-size: 2.8rem;
+      }
+
+      .card {
+        padding: 25px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+      <h1>عيسى</h1>
+      <p>أداة تُستخدم، لا هوية تُعرض</p>
+    </section>
+
+    <!-- MANIFESTO -->
+    <section class="card">
+      <p>
+        أنا لا أبني هوية رقمية، ولا أبحث عن الإعجاب.
+        <br><br>
+        أبني <span class="accent">أداة أستخدمها يوميًا</span>
+        لاتخاذ قرار أوضح، تقليل التردد،
+        وضبط الصراع الداخلي بدل تجميله.
+        <br><br>
+        تفكيري أنظمي،
+        لكن قيمته لا تأتي من التعقيد،
+        بل من <span class="accent">تحويل التفكير إلى سلوك</span>.
+        <br><br>
+        ما أعمل عليه ليس تطوير ذات،
+        ولا محتوى تحفيزي،
+        بل محاولة صادقة لبناء
+        <span class="accent">قيادة داخلية قابلة للاختبار</span>.
+        <br><br>
+        أجرّب، أفشل، أعدّل.
+        أحتفظ فقط بما يعمل،
+        وأحذف كل ما يبدو ذكيًا ولا يُستخدم.
+      </p>
+
+      <div class="question">
+        كيف أتخذ قرارًا أفضل عندما أكون مترددًا؟
+      </div>
+
+      <p>
+        كل ما في هذا النظام
+        إما يخدم هذا السؤال
+        أو سيتم حذفه.
+        <br><br>
+        الهدف ليس أن أبدو قويًا،
+        بل أن <span class="accent">أتصرف بقوة</span>
+        عندما لا يراقبني أحد.
+      </p>
+    </section>
+
+    <footer>
+      SYSTEM STATUS: OPERATIONAL
+    </footer>
+
+  </div>
+</body>
+</html>
